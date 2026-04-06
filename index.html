@@ -149,9 +149,61 @@
         .hero-subtitle {
             font-size: 18px;
             color: rgba(255,255,255,0.95);
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             max-width: 320px;
             line-height: 1.8;
+        }
+
+        /* 核心卖点展示 */
+        .hero-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease 0.3s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hero-feature:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateX(5px);
+        }
+
+        .hero-feature-icon {
+            font-size: 22px;
+        }
+
+        .hero-feature-text {
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .hero-trust {
+            margin-top: 25px;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .hero-trust strong {
+            color: white;
+            font-size: 18px;
         }
 
         .btn-primary {
@@ -176,6 +228,66 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
+        .btn-primary:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+        }
+
         /* 表单页顶部header */
         .page-header {
             text-align: center;
@@ -183,15 +295,28 @@
             padding-top: 30px;
         }
 
+        .page-header-badge {
+            display: inline-block;
+            background: var(--gradient-1);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
         .page-header h2 {
-            font-size: 26px;
+            font-size: 28px;
             color: var(--dark);
             margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .page-header p {
             color: #6c757d;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* 目的地下拉选择 */
@@ -287,13 +412,33 @@
             padding: 15px 10px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .style-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
         }
 
         .style-option:hover {
             background: #FFF5F0;
             border-color: var(--primary);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,140,66,0.2);
+        }
+
+        .style-option:active {
+            transform: translateY(-1px) scale(0.98);
         }
 
         .style-option.selected {
@@ -998,6 +1143,68 @@
         .hero-page ~ .bottom-nav {
             display: none;
         }
+
+        /* 悬浮顾问按钮 */
+        .fab-consultant {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255,140,66,0.4);
+            transition: all 0.3s ease;
+            z-index: 99;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .fab-consultant:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(255,140,66,0.5);
+        }
+
+        .fab-consultant-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        /* 结果页优化 */
+        .result-header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 30px 20px;
+            margin: -20px -20px 20px;
+            text-align: center;
+        }
+
+        .result-header h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .result-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .result-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body>
@@ -1007,21 +1214,41 @@
         <div class="cloud cloud-2">☁️</div>
         <div class="cloud cloud-3">☁️</div>
         <div class="hero-content">
-            <div class="hero-badge">🌴 年轻人的旅行方式</div>
-            <h1 class="hero-title">说走就走<br><span>让旅行更简单</span></h1>
-            <p class="hero-subtitle">输入人数、天数、预算<br>AI为你定制专属东南亚之旅</p>
+            <div class="hero-badge">⚡ 1分钟出行程 · AI定制 · 专业顾问</div>
+            <h1 class="hero-title">说走就走<br><span>年轻人的旅行方式</span></h1>
+            <p class="hero-subtitle">超强定制化AI规划师<br>全流程服务，让旅行更简单</p>
+            
+            <!-- 核心卖点 -->
+            <div class="hero-features">
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">⚡</span>
+                    <span class="hero-feature-text">1分钟出行程</span>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">🤖</span>
+                    <span class="hero-feature-text">AI智能定制</span>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">👨‍💼</span>
+                    <span class="hero-feature-text">专业顾问咨询</span>
+                </div>
+            </div>
+            
             <button class="btn-primary" onclick="goToRegion()">
-                开始规划
+                立即规划行程
                 <span style="font-size: 24px;">✈️</span>
             </button>
+            
+            <p class="hero-trust">已服务 <strong>50,000+</strong> 年轻人出行</p>
         </div>
     </div>
 
     <!-- 表单页 -->
     <div class="page form-page" id="page-form">
         <div class="page-header">
-            <h2>✈️ 旅行规划</h2>
-            <p>填写出行信息，秒出专属行程</p>
+            <div class="page-header-badge">⚡ AI定制中</div>
+            <h2>✈️ 说走就走</h2>
+            <p>1分钟生成专属行程 · 专业顾问全程支持</p>
         </div>
         <div class="form-container">
             <!-- 目的地下拉 -->
@@ -1035,6 +1262,7 @@
                         <option value="vietnam">🇻🇳 越南</option>
                         <option value="singapore">🇸🇬 新加坡</option>
                         <option value="malaysia">🇲🇾 马来西亚</option>
+                        <option value="indonesia">🇮🇩 印度尼西亚</option>
                         <option value="japan">🇯🇵 日本</option>
                         <option value="korea">🇰🇷 韩国</option>
                     </select>
@@ -1146,8 +1374,9 @@
     <!-- 结果页 -->
     <div class="page result-page" id="page-result">
         <div class="result-header">
+            <div class="result-badge">⚡ AI智能规划完成</div>
             <h2>🎯 你的专属行程</h2>
-            <div class="result-destination" id="resultDestination">泰国 · 曼谷 · 5天4晚</div>
+            <p id="resultDestination">泰国 · 曼谷 · 5天4晚</p>
             <div class="result-summary">
                 <div class="summary-item">
                     <div class="summary-value" id="resultPeople">2</div>
@@ -1167,6 +1396,12 @@
         <div id="resultContent">
             <!-- 动态生成内容 -->
         </div>
+    </div>
+
+    <!-- 悬浮顾问按钮 -->
+    <div class="fab-consultant" onclick="openWechatModal()">
+        <span class="fab-consultant-icon">👨‍💼</span>
+        <span>顾问</span>
     </div>
 
     <!-- 底部导航 -->
@@ -1242,6 +1477,10 @@
                     tips: 'RCA需要带护照，夜店凌晨2点关门，可以转场去 after party'
                 },
                 activities: ['泰式按摩SPA', '购物血拼', '寺庙祈福', '船游湄南河'],
+                shopping: ['暹罗百丽宫Siam Paragon', 'Central World', 'Terminal 21', '乍都乍周末市场', 'MBK Center'],
+                restaurants: ['建兴酒家', 'Jay Fai米其林', '蓝象餐厅', 'Nara Thai', 'The Never Ending Summer'],
+                nightMarket: ['Asiatique河滨夜市', '拉差达火车夜市', '摩天轮夜市', '考山路夜市'],
+                walkingStreet: ['考山路步行街', '是隆路Silom', '素坤逸路Sukhumvit', '唐人街Yaowarat'],
                 transport: { 
                     hub: true, 
                     airport: '素万那普/廊曼',
@@ -1264,6 +1503,10 @@
                     food: ['Khao Soi咖喱面', '泰北香肠', '凤飞飞猪脚饭', '夜市小吃']
                 },
                 activities: ['大象保护营', '泰菜烹饪课', '丛林飞跃', '寺庙禅修'],
+                shopping: ['周日夜市', '宁曼路一号', '玛雅购物中心', '瓦洛洛市场', '尼曼路手工艺品店'],
+                restaurants: ['Khao Soi Khun Yai咖喱面', 'Tong Tem Toh泰北菜', 'The House by Ginger', 'Dash! Restaurant', '凤飞飞猪脚饭'],
+                nightMarket: ['周日夜市', '周六夜市', '长康路夜市', '草垛夜市'],
+                walkingStreet: ['宁曼路Nimman', '塔佩门古城', 'Ratchadamnoen步行街'],
                 transport: { 
                     fromBangkok: '飞机1h/火车12h', 
                     hub: false,
@@ -1295,6 +1538,12 @@
                     tips: '芭东酒吧街晚上10点后最热闹，注意拉客的，可以砍价，建议结伴而行'
                 },
                 activities: ['海滩日光浴', '浮潜深潜', '帆船出海', 'SPA按摩', '冲浪'],
+                shopping: ['江西冷购物中心', '普吉镇老街', '芭东夜市', 'Central Festival', 'Big C超市'],
+                restaurants: ['Baan Rim Pa悬崖餐厅', 'No.6 Restaurant', 'Doo Dee Thai Food', 'Kan Eang@Pier', 'Raya Restaurant'],
+                beach: ['芭东海滩Patong', '卡塔海滩Kata', '卡伦海滩Karon', '苏林海滩Surin', '奈汉海滩Nai Harn'],
+                nightMarket: ['芭东夜市', '普吉镇周末夜市', 'Chillva夜市', 'Malin夜市'],
+                walkingStreet: ['普吉镇老街Thalang', 'Bangla步行街', 'Kata海边步道'],
+                diving: ['皮皮岛潜水', '皇帝岛深潜', '珊瑚岛浮潜', 'Shark Point', 'King Cruiser沉船'],
                 transport: { 
                     fromBangkok: '飞机1.5h', 
                     hub: false, 
@@ -1323,11 +1572,19 @@
                     tips: '步行街晚上10点后最热闹，注意保管随身物品，可以玩到凌晨但注意休息'
                 },
                 activities: ['海滩水上运动', '游艇出海', '高尔夫', '夜生活'],
+                shopping: ['Terminal 21 Pattaya', 'Central Festival', '芭提雅夜市', '四方水上市场'],
+                restaurants: ['Cabbages & Condoms', 'The Glass House', 'Pattaya Beer Garden', 'Moom Aroi', 'King Seafood'],
+                beach: ['芭提雅海滩', '中天海滩', '格兰岛海滩', '珊瑚岛'],
+                nightMarket: ['芭提雅夜市', 'Thepprasit夜市', '中天夜市'],
+                walkingStreet: ['Walking Street步行街', '芭提雅海滩路', 'Second Road'],
                 transport: { 
                     fromBangkok: '车程2h', 
                     hub: false,
                     toOther: {
-                        '曼谷': '车程2h'
+                        '曼谷': '车程2h',
+                        '大城': '车程2h',
+                        '华欣': '车程3h',
+                        '北碧': '车程2.5h'
                     },
                     nearestAirport: { city: '曼谷', time: '车程2h' }
                 }
@@ -1342,6 +1599,12 @@
                     night: ['海滩酒吧', '夜市', '泰式按摩']
                 },
                 activities: ['攀岩', '皮划艇', '浮潜', '海滩放松', '跳岛'],
+                shopping: ['奥南夜市', '甲米镇步行街', '莱利海滩小店'],
+                restaurants: ['Lae Lay Grill悬崖餐厅', 'Jungle Kitchen', 'May & Mark', 'Poo Dam Restaurant', 'Tandoori Night'],
+                beach: ['奥南海滩', '莱利海滩Railay', '图卡海滩Tubkaek', '功孟海滩Khlong Muang'],
+                nightMarket: ['奥南夜市', '甲米镇夜市', '周末夜市'],
+                walkingStreet: ['甲米镇步行街', '奥南海滩路'],
+                diving: ['皮皮岛潜水', 'Hong岛浮潜', '四岛浮潜', 'Bida Nok'],
                 transport: { 
                     fromBangkok: '飞机1.5h', 
                     fromPhuket: '船2h/车3h', 
@@ -1361,6 +1624,12 @@
                     night: ['ARK Bar', '满月派对', '海滩俱乐部']
                 },
                 activities: ['海滩SPA', '瑜伽 retreat', '帆船', '潜水', '海鲜大餐'],
+                shopping: ['渔人村步行街', 'Central Festival', '查汶夜市', '拉迈夜市'],
+                restaurants: ['Dining on the Rocks', 'The Cliff Bar & Grill', 'Jungle Club', 'Coco Tam', 'Sabienglae Restaurant'],
+                beach: ['查汶海滩Chaweng', '拉迈海滩Lamai', '波普海滩Bophut', '湄南海滩Maenam', '曾蒙海滩Choeng Mon'],
+                nightMarket: ['渔人村夜市', '查汶夜市', '拉迈夜市', '波普夜市'],
+                walkingStreet: ['渔人村步行街Fisherman Village', '查汶步行街', '波普渔村'],
+                diving: ['丹岛浮潜', '安通国家公园潜水', 'Sail Rock', '春蓬尖峰'],
                 transport: { 
                     fromBangkok: '飞机1h', 
                     hub: false, 
@@ -1368,6 +1637,54 @@
                     luxury: true,
                     hasAirport: true,
                     airportName: '苏梅国际机场'
+                }
+            },
+            '大城': {
+                type: CityTypes.CULTURE,
+                country: 'thailand',
+                attractions: {
+                    morning: ['玛哈泰寺树抱佛', '帕司山碧寺', '帕蓝寺', '柴瓦塔纳兰寺'],
+                    afternoon: ['大城历史公园', '邦芭茵夏宫', '大城国家博物馆', '崖差蒙空寺'],
+                    evening: ['大城夜市', '河畔日落', '历史公园灯光秀'],
+                    night: ['河畔餐厅', '传统泰式按摩', '夜市小吃']
+                },
+                activities: ['历史古迹游', '寺庙巡礼', '泰式服饰拍照', '骑大象'],
+                shopping: ['大城夜市', '大城水上市场', '本地手工艺品店'],
+                restaurants: ['Malakor河边餐厅', 'Coffee Old City', 'Grandparent Home', 'Sai Thong River Restaurant', '大城虾市场'],
+                nightMarket: ['大城夜市', '大城水上市场', '火车站夜市'],
+                walkingStreet: ['大城历史公园周边', '大城老街', '河畔步道'],
+                transport: { 
+                    fromBangkok: '车程1.5h', 
+                    hub: false,
+                    hasAirport: false,
+                    toOther: {
+                        '曼谷': '车程1.5h',
+                        '芭提雅': '车程2h'
+                    }
+                }
+            },
+            '华欣': {
+                type: CityTypes.BEACH,
+                country: 'thailand',
+                attractions: {
+                    morning: ['华欣海滩', '爱与希望之宫', '华欣火车站', '拷汪行宫'],
+                    afternoon: ['圣托里尼公园', '瑞士绵羊牧场', '华欣威尼斯', '黑山水上乐园'],
+                    evening: ['华欣夜市', '蝉创意夜市', '海滩骑马'],
+                    night: ['华欣酒吧街', '夜市海鲜', 'Live Music']
+                },
+                activities: ['海滩骑马', '高尔夫', '水上乐园', '夜市美食'],
+                shopping: ['华欣夜市', 'Bluport购物中心', 'Market Village', '蝉创意夜市'],
+                restaurants: ['超雷海鲜', '正盛食堂', 'Koti Restaurant', '华欣夜市小吃', 'Sang Thai Seafood'],
+                beach: ['华欣海滩Hua Hin Beach', '筷子海滩Khao Takiab', 'Suan Son海滩'],
+                nightMarket: ['华欣夜市', '蝉创意夜市Cicada', 'Tamarind夜市'],
+                walkingStreet: ['华欣夜市步行街', '希尔顿酒店前海滩步道'],
+                transport: { 
+                    fromBangkok: '车程3h', 
+                    hub: false,
+                    hasAirport: false,
+                    toOther: {
+                        '曼谷': '车程3h'
+                    }
                 }
             },
 
@@ -1383,6 +1700,10 @@
                     food: ['Pho牛肉粉', 'Banh Mi法棍', '鸡蛋咖啡', '春卷']
                 },
                 activities: ['老城区漫步', '法式风情游', '咖啡文化体验'],
+                shopping: ['老城区36街', '同春市场', 'Vincom Center', '河内夜市'],
+                restaurants: ['Pho Gia Truyen', 'Bun Cha Huong Lien', 'Cafe Giang鸡蛋咖啡', 'Quan An Ngon', 'Cha Ca La Vong'],
+                nightMarket: ['河内夜市', '同春夜市', '老城区夜市'],
+                walkingStreet: ['还剑湖步行街', '老城区36街', '火车街'],
                 transport: { 
                     hub: true, 
                     toHalong: '车程2.5h',
@@ -1408,6 +1729,11 @@
                     night: ['海滩酒吧', 'Sky Bar', '夜市海鲜']
                 },
                 activities: ['海滩日光浴', '冲浪', '滑翔伞', '高尔夫'],
+                shopping: ['Big C超市', 'Vincom Plaza', 'Han市场', 'Con市场'],
+                restaurants: ['Madame Lan', 'Mi Quang 1A', 'Be Man海鲜', 'Banh Xeo Ba Duong', 'Lam Vien Restaurant'],
+                beach: ['美溪海滩My Khe', 'Non Nuoc海滩', 'Bac My An海滩'],
+                nightMarket: ['Helio夜市', 'Son Tra夜市', 'Han市场夜市'],
+                walkingStreet: ['汉江步行街', '美溪海滩路', 'Tran Phu步行街'],
                 transport: { 
                     fromHanoi: '飞机1h/火车14h', 
                     toHoiAn: '车程30min', 
@@ -1433,6 +1759,10 @@
                     night: ['河边餐厅', '酒吧街', ' live music']
                 },
                 activities: ['定制奥黛', '灯笼DIY', '美食之旅', '自行车游乡村'],
+                shopping: ['会安古城手工艺品', '灯笼街', '裁缝店', '中央市场'],
+                restaurants: ['Morning Glory', 'Miss Ly Cafeteria', 'White Rose Restaurant', 'Cao Lau Khong Gian Xanh', 'Nu Eatery'],
+                nightMarket: ['会安夜市', '河边夜市', '灯笼街夜市'],
+                walkingStreet: ['会安古城步行街', '灯笼街', '河边步道'],
                 transport: { 
                     fromDanang: '车程30min', 
                     hub: false,
@@ -1455,6 +1785,12 @@
                     night: ['Sailing Club', 'Skylight', '夜市酒吧']
                 },
                 activities: ['潜水考证', '泥浆浴', '海滩瑜伽', '游艇派对'],
+                shopping: ['芽庄购物中心', 'Dam市场', 'Vincom Plaza', '芽庄夜市'],
+                restaurants: ['Lac Canh Restaurant', 'Nha Hang Yen', 'Mix Restaurant', 'Lanterns Vietnamese', 'Costa Seafood'],
+                beach: ['芽庄海滩Nha Trang Beach', 'Tran Phu海滩', 'Hon Chong海滩'],
+                nightMarket: ['芽庄夜市', '海鲜排档街', 'Tran Phu夜市'],
+                walkingStreet: ['Tran Phu步行街', '芽庄海滩路', 'Le Thanh Ton街'],
+                diving: ['四岛潜水', 'Hon Mun海洋公园', 'Tiger Beach', 'Madonna Rock'],
                 transport: { 
                     fromHanoi: '飞机2h', 
                     fromHCMC: '飞机1h', 
@@ -1489,6 +1825,10 @@
                     tips: '范五老街凌晨2点后人最多，注意飞车党，建议打车回酒店'
                 },
                 activities: ['摩托车游', '美食之旅', '法式风情游'],
+                shopping: ['滨城市场', '钻石广场', 'Vincom Center', 'Saigon Square', '安东市场'],
+                restaurants: ['Pho Hoa', 'Banh Mi Huynh Hoa', 'The Lunch Lady', 'Pizza 4Ps', 'Propaganda Vietnamese Bistro'],
+                nightMarket: ['滨城市场夜市', '范五老街夜市', '阮惠步行街夜市'],
+                walkingStreet: ['阮惠步行街', '范五老街', '同起街', '黎利街'],
                 transport: { 
                     hub: true, 
                     toMekong: '车程2h',
@@ -1512,6 +1852,12 @@
                     evening: ['日落小镇', '夜市', '海鲜烧烤']
                 },
                 activities: ['海滩度假', '潜水', '缆车观光', '野生动物园'],
+                shopping: ['阳东夜市', '富国岛夜市', 'Cua Can市场', '珍珠乐园商店'],
+                restaurants: ['Crab House', 'Winston Burgers', 'The Pepper Tree', 'Ra Khoi', 'Bup Restaurant'],
+                beach: [' Sao Beach', 'Ong Lang Beach', 'Long Beach', 'Khem Beach', 'Rach Vem Beach'],
+                nightMarket: ['阳东夜市', '富国岛夜市', '海鲜烧烤街'],
+                walkingStreet: ['阳东镇步行街', '日落小镇', 'Tran Hung Dao街'],
+                diving: ['富国岛潜水', '指甲岛浮潜', '香岛浮潜', '南岛潜水'],
                 transport: { 
                     fromHCMC: '飞机1h', 
                     fromHanoi: '飞机2h', 
@@ -1528,6 +1874,34 @@
                     }
                 }
             },
+            '顺化': {
+                type: CityTypes.CULTURE,
+                country: 'vietnam',
+                attractions: {
+                    morning: ['顺化皇城', '天姥寺', '启定皇陵', '明命皇陵'],
+                    afternoon: ['嗣德皇陵', '顺化历史博物馆', '东巴市场', '香江游船'],
+                    evening: ['香江日落', '顺化夜市', '宫廷音乐表演'],
+                    night: ['香江边餐厅', '夜市小吃', '传统茶馆']
+                },
+                activities: ['历史文化游', '皇陵巡礼', '香江游船', '宫廷美食品尝'],
+                shopping: ['东巴市场', '顺化夜市', '手工艺品店', '香料市场'],
+                restaurants: ['Ancient Hue Garden Houses', 'Lac Thien Restaurant', 'Hanh Restaurant', '顺化宫廷菜餐厅', '东巴市场小吃'],
+                nightMarket: ['顺化夜市', '东巴夜市', '香江边夜市'],
+                walkingStreet: ['顺化皇城周边', '香江步道', '东巴市场街'],
+                transport: { 
+                    fromDanang: '车程2h', 
+                    fromHanoi: '飞机1h+车程30min',
+                    hub: false,
+                    hasAirport: true,
+                    airportName: '富牌国际机场',
+                    toOther: {
+                        '岘港': '车程2h',
+                        '会安': '车程2.5h',
+                        '河内': '飞机1h',
+                        '胡志明市': '飞机1h'
+                    }
+                }
+            },
 
             // 新加坡
             '新加坡': {
@@ -1540,11 +1914,18 @@
                     night: ['夜间动物园', '屋顶酒吧', ' Clarke Quay夜店']
                 },
                 activities: ['环球影城', '圣淘沙', '美食之旅', '购物血拼'],
+                shopping: ['乌节路ION Orchard', '滨海湾金沙购物城', '怡丰城VivoCity', '武吉士街Bugis Street', '牛车水唐人街'],
+                restaurants: ['了凡油鸡饭', '天天海南鸡饭', '松发肉骨茶', '珍宝海鲜', '老巴刹美食中心'],
+                nightMarket: ['老巴刹夜市', '牛车水夜市', '芽笼夜市'],
+                walkingStreet: ['克拉码头', '驳船码头', '安详山', '哈芝巷'],
                 transport: { 
                     hub: true, 
                     cityState: true,
                     hasAirport: true,
-                    airportName: '樟宜机场'
+                    airportName: '樟宜机场',
+                    toOther: {
+                        '新山': '过关1h'
+                    }
                 }
             },
 
@@ -1559,6 +1940,10 @@
                     night: ['Changkat酒吧街', '屋顶酒吧', '夜市']
                 },
                 activities: ['购物', '美食', '城市观光'],
+                shopping: ['Pavilion Kuala Lumpur', 'Suria KLCC', 'Mid Valley Megamall', '中央艺术坊', '茨厂街'],
+                restaurants: ['Jalan Alor阿罗街', 'Madam Kwan', '关夫人餐厅', '黄亚华小食店', '新峰肉骨茶'],
+                nightMarket: ['阿罗街夜市', '康乐夜市', 'SS2夜市'],
+                walkingStreet: ['茨厂街Petaling Street', 'Changkat Bukit Bintang', 'Jalan Alor'],
                 transport: { 
                     hub: true,
                     hasAirport: true,
@@ -1578,6 +1963,11 @@
                     evening: ['新关仔角夜市', '汕头街', '爱情巷']
                 },
                 activities: ['美食之旅', '文化遗产游', '海滩放松'],
+                shopping: ['乔治市老街', 'Gurney Plaza', 'Queensbay Mall', '新关仔角市场'],
+                restaurants: ['新关仔角夜市', '汕头街四大天王', '德成饭店', '伍秀泽海南鸡饭', '潮州煎蕊'],
+                beach: ['巴都丁宜海滩', '丹绒武雅海滩', '猴子海滩'],
+                nightMarket: ['新关仔角夜市', '汕头街夜市', 'Kimberley Street夜市'],
+                walkingStreet: ['爱情巷', '本头公巷', '牛干东街', 'Chulia Street'],
                 transport: { 
                     fromKL: '飞机1h/车程5h', 
                     hub: false,
@@ -1598,6 +1988,12 @@
                     evening: ['丹绒亚路日落', '夜市', '海鲜市场']
                 },
                 activities: ['潜水', '登山', '海岛游', '野生动物'],
+                shopping: ['Imago购物中心', 'Suria Sabah', '加雅街周日市场', '菲律宾市场'],
+                restaurants: ['大茄来海鲜', '佑记肉骨茶', '怡丰茶室', '发记鱼杂', '新记肉骨茶'],
+                beach: ['丹绒亚路海滩', '美人鱼岛', '环滩岛', '马努干岛'],
+                nightMarket: ['加雅街夜市', '菲律宾市场', '海鲜市场'],
+                walkingStreet: ['加雅街Gaya Street', '澳洲坊', '海旁街'],
+                diving: ['西巴丹岛潜水', '马布岛浮潜', '卡帕莱潜水', '马达京潜水'],
                 transport: { 
                     fromKL: '飞机2.5h', 
                     hub: false, 
@@ -1615,6 +2011,12 @@
                     evening: ['珍南夜市', '日落巡航', '海鲜']
                 },
                 activities: ['免税购物', '海滩', '游艇', '滑翔伞'],
+                shopping: ['珍南海滩免税店', '瓜镇免税店', 'Cenang Mall', '兰卡威购物中心'],
+                restaurants: ['真浪花园海鲜', 'Wonderland Food Store', 'Yellow Cafe', 'Scarborough Fish & Chips', 'Orkid Ria Seafood'],
+                beach: ['珍南海滩Pantai Cenang', '丹绒鲁海滩', '黑沙滩', '达泰湾'],
+                nightMarket: ['珍南夜市', '瓜镇夜市', 'Ulu Melaka夜市'],
+                walkingStreet: ['珍南海滩路', '瓜镇码头', 'Pantai Tengah'],
+                diving: ['芭雅岛浮潜', 'Payar Island Marine Park', 'Pulau Payar潜水'],
                 transport: { 
                     fromKL: '飞机1h', 
                     fromPenang: '船3h', 
@@ -1623,6 +2025,32 @@
                     dutyFree: true,
                     hasAirport: true,
                     airportName: '兰卡威国际机场'
+                }
+            },
+            '新山': {
+                type: CityTypes.CULTURE,
+                country: 'malaysia',
+                attractions: {
+                    morning: ['乐高乐园', '柔佛古庙', '苏丹阿布巴卡清真寺', '新山华族历史文物馆'],
+                    afternoon: ['Hello Kitty乐园', '托马斯小镇', 'KSL购物中心', '城市广场'],
+                    evening: ['陈旭年街', '新山夜市', '金海湾'],
+                    night: ['陈旭年街酒吧', 'KTV', '夜市小吃']
+                },
+                activities: ['亲子乐园', '美食探索', '历史文化', '购物'],
+                shopping: ['City Square', 'KSL City Mall', 'Mid Valley Southkey', 'AEON Tebrau City', 'Johor Premium Outlets'],
+                restaurants: ['顺发肉骨茶', '金龙咖喱鱼头', '华美茶餐室', '协裕面包西菓厂', '宽中辣沙'],
+                nightMarket: ['新山夜市', '陈旭年街夜市', 'Taman Pelangi夜市'],
+                walkingStreet: ['陈旭年街Jalan Tan Hiok Nee', '新山老街', '金海湾步道'],
+                transport: { 
+                    fromSingapore: '过关1h', 
+                    fromKL: '车程4h/飞机1h',
+                    hub: false,
+                    hasAirport: true,
+                    airportName: '士乃国际机场',
+                    toOther: {
+                        '新加坡': '过关1h',
+                        '吉隆坡': '飞机1h/车程4h'
+                    }
                 }
             },
 
@@ -1647,6 +2075,10 @@
                     tips: '歌舞伎町注意拉客的，黄金街很多店有座位费，末班车是0:30注意时间'
                 },
                 activities: ['购物', '动漫文化', '美食', '寺庙巡礼'],
+                shopping: ['银座Ginza', '新宿高岛屋', '涩谷109', '表参道Hills', '秋叶原电器街'],
+                restaurants: ['筑地市场寿司', '一兰拉面', '矶丸水产', '鸟贵族', '蟹道乐'],
+                nightMarket: ['新宿思い出横丁', '上野阿美横丁', '吉祥寺口'],
+                walkingStreet: ['表参道', '原宿竹下通', '银座中央通', '中目黑'],
                 transport: { 
                     hub: true,
                     hasAirport: true,
@@ -1676,6 +2108,10 @@
                     tips: '飞田新地禁止拍照，道顿堀很多店营业到凌晨5点'
                 },
                 activities: ['美食之旅', '购物', '主题公园'],
+                shopping: ['心斋桥筋', '道顿堀', '梅田大丸', '难波Parks', '美国村'],
+                restaurants: ['蟹道乐', '一兰拉面', '金龙拉面', '章鱼烧道乐', '串炸达摩'],
+                nightMarket: ['道顿堀', '法善寺横丁', '新世界的横丁'],
+                walkingStreet: ['心斋桥筋', '道顿堀', '美国村', '堀江'],
                 transport: { 
                     fromTokyo: '新干线2.5h', 
                     hub: true,
@@ -1696,6 +2132,10 @@
                     evening: ['先斗町', '鸭川', '花见小路']
                 },
                 activities: ['和服体验', '茶道', '寺庙巡礼', '怀石料理'],
+                shopping: ['锦市场', '新京极通', '寺町通', '祇园商店街', '岚山竹林小径'],
+                restaurants: ['菊乃井', '瓢亭', '弘烧肉', '汤豆腐奥丹', '锦市场小吃'],
+                nightMarket: ['先斗町', '鸭川纳凉床', '祇园夜市'],
+                walkingStreet: ['花见小路', '先斗町', '鸭川', '祇园白川'],
                 transport: { 
                     fromOsaka: '电车1h', 
                     fromTokyo: '新干线2h', 
@@ -1712,6 +2152,10 @@
                     evening: ['札幌拉面街', '薄野', '温泉']
                 },
                 activities: ['滑雪', '温泉', '薰衣草', '海鲜大餐'],
+                shopping: ['狸小路商店街', '札幌工厂', '小樽堺町通', '白色恋人公园', '札幌地下街'],
+                restaurants: ['蟹本家', '拉面共和国', '成吉思汗烤肉', '汤咖喱', '二条市场海鲜'],
+                nightMarket: ['札幌拉面横丁', '狸小路夜市', '二条市场'],
+                walkingStreet: ['狸小路', '薄野', '小樽运河', '札幌站前通'],
                 transport: { 
                     fromTokyo: '飞机1.5h', 
                     hub: false, 
@@ -1729,12 +2173,71 @@
                     evening: ['国际通', '琉球料理', '三线演奏']
                 },
                 activities: ['潜水', '海滩', '海洋馆', '琉球文化'],
+                shopping: ['国际通', '美国村', 'DFS免税店', '那霸Main Place', 'Ashibinaa Outlet'],
+                restaurants: ['暖暮拉面', '石垣牛', '海葡萄', '冲绳面', 'Blue Seal冰淇淋'],
+                beach: ['万座毛海滩', '古宇利海滩', '残波岬', '部濑名海中公园'],
+                nightMarket: ['国际通夜市', '牧志公设市场', '那霸夜市'],
+                walkingStreet: ['国际通', '壶屋陶瓷器街', 'Tsuboya陶器街'],
+                diving: ['青之洞窟潜水', '真荣田岬', 'Kerama Islands', '水纳岛'],
                 transport: { 
                     fromTokyo: '飞机2.5h', 
                     hub: false, 
                     island: true,
                     hasAirport: true,
                     airportName: '那霸机场'
+                }
+            },
+            '奈良': {
+                type: CityTypes.CULTURE,
+                country: 'japan',
+                attractions: {
+                    morning: ['东大寺', '奈良公园喂鹿', '春日大社', '兴福寺'],
+                    afternoon: ['二月堂', '若草山', '奈良国立博物馆', '唐招提寺'],
+                    evening: ['奈良町', '元兴寺', '夜景'],
+                    night: ['奈良町酒馆', '传统日式旅馆', '静谧夜晚']
+                },
+                activities: ['喂鹿体验', '寺庙巡礼', '和服体验', '古街漫步'],
+                shopping: ['奈良町', '东大寺门前町', '近铁奈良站商店街', '奈良渍专门店'],
+                restaurants: ['志津香釜饭', '中谷堂麻糬', '奈良菊水楼', '春日荷茶屋', '大佛布丁'],
+                nightMarket: ['奈良町夜市', '东大寺门前夜市'],
+                walkingStreet: ['奈良町Naramachi', '东大寺门前町', '近铁奈良站前'],
+                transport: { 
+                    fromOsaka: '电车1h', 
+                    fromKyoto: '电车1h',
+                    fromTokyo: '新干线2.5h+电车1h',
+                    hub: false,
+                    hasAirport: false,
+                    toOther: {
+                        '大阪': '电车1h',
+                        '京都': '电车1h'
+                    }
+                }
+            },
+            '神户': {
+                type: CityTypes.CULTURE,
+                country: 'japan',
+                attractions: {
+                    morning: ['神户港塔', '北野异人馆', '生田神社', '美利坚公园'],
+                    afternoon: ['有马温泉', '六甲山', '神户动物王国', '南京町'],
+                    evening: ['神户牛肉晚餐', '百万美元夜景', ' Harbor Land'],
+                    night: ['三宫酒吧街', '北野町夜巡', '温泉旅馆']
+                },
+                activities: ['神户牛美食', '温泉体验', '夜景欣赏', '异人馆巡礼'],
+                shopping: ['三宫中心街', 'Harbor Land', '南京町', '大丸百货', '阪急百货'],
+                restaurants: ['Mouriya神户牛', '石田屋', '神户牛ステーキ Ishida', '有马温泉旅馆料理', '南京町中華街'],
+                nightMarket: ['南京町夜市', '三宫夜市'],
+                walkingStreet: ['北野町Kitano-cho', '三宫中心街', '南京町'],
+                transport: { 
+                    fromOsaka: '电车30min', 
+                    fromKyoto: '电车1h',
+                    fromTokyo: '新干线2.5h',
+                    hub: false,
+                    hasAirport: false,
+                    nearestAirport: { city: '大阪', time: '电车1h到关西机场' },
+                    toOther: {
+                        '大阪': '电车30min',
+                        '京都': '电车1h'
+                    }
                 }
             },
 
@@ -1749,6 +2252,10 @@
                     night: ['梨泰院', '弘大酒吧', '夜店']
                 },
                 activities: ['K-pop体验', '购物', '美妆', '美食'],
+                shopping: ['明洞', '东大门', '江南COEX', '弘大', '梨大女人街'],
+                restaurants: ['土俗村参鸡汤', '王妃家烤肉', 'School Food', '姜虎东白丁', 'Twotwo炸鸡'],
+                nightMarket: ['明洞夜市', '东大门夜市', '弘大俱乐部街', '梨泰院酒吧街'],
+                walkingStreet: ['弘大步行区', '三清洞', '仁寺洞', '清潭洞'],
                 transport: { 
                     hub: true,
                     hasAirport: true,
@@ -1768,6 +2275,11 @@
                     evening: ['The Bay 101', '夜市', '海鲜']
                 },
                 activities: ['海滩', '电影文化', '海鲜', '彩色房子'],
+                shopping: ['西面地下街', '光复路时尚街', '札嘎其市场', '乐天百货釜山店'],
+                restaurants: ['札嘎其市场海鲜', '猪肉汤饭', '小麦面', '糖饼', '烤鳗鱼'],
+                beach: ['海云台海滩', '广安里海滩', '松亭海滩', '多大浦海滩'],
+                nightMarket: ['札嘎其夜市', '富平易拉罐夜市', '海云台夜市'],
+                walkingStreet: ['光复路', 'BIFF广场', '海云台海滨步道', '甘川文化村'],
                 transport: { 
                     fromSeoul: 'KTX 2.5h', 
                     hub: false,
@@ -1784,9 +2296,15 @@
                 attractions: {
                     morning: ['城山日出峰', '汉拿山', '柱状节理带'],
                     afternoon: ['牛岛', '涉地可支', '泰迪熊博物馆'],
-                    evening: ['黑猪肉街', '东门市场', '神话世界']
+                    evening: ['黑猪肉街', '东门市场', '神话世界'],
+                    food: ['黑猪肉烤肉', '生鱼片', '柑橘甜品', '海鲜刺身']
                 },
                 activities: ['徒步', '海滩', '美食', '火山地貌'],
+                shopping: ['济州特产店', '免税店', '济州东门市场', '新济州商业街'],
+                restaurants: ['黑猪肉街烤肉', '海边生鱼片店', '济州刀削面', '柑橘冰淇淋'],
+                beach: ['挟才海水浴场', '中文海水浴场', '梨湖海水浴场', '咸德海水浴场', '月汀里海滩'],
+                nightMarket: ['东门夜市', '济州偶来市场', '塔洞海边夜市'],
+                walkingStreet: ['济州市区', '梨湖洞壁画村', '城邑民俗村', '七星街'],
                 transport: { 
                     fromSeoul: '飞机1h', 
                     hub: false, 
@@ -1794,6 +2312,163 @@
                     visaFree: true,
                     hasAirport: true,
                     airportName: '济州国际机场'
+                }
+            },
+
+            // 印度尼西亚
+            '巴厘岛': {
+                type: CityTypes.ISLAND,
+                country: 'indonesia',
+                attractions: {
+                    morning: ['乌鲁瓦图神庙', '圣泉寺', '德哥拉朗梯田', '巴图尔火山'],
+                    afternoon: ['科马纳海滩', '水明漾海滩', '努沙杜瓦海滩', '金巴兰海滩'],
+                    evening: ['乌鲁瓦图悬崖日落', '金巴兰海鲜烧烤', '乌布夜市', '水明漾酒吧街'],
+                    night: ['水明漾俱乐部区', '金巴兰海滩餐厅', 'Sky Garden夜店'],
+                    food: ['Nasi Goreng炒饭', 'Babi Guling烤猪', '烤海鲜', 'Mie Goreng炒面', '沙嗲串烧']
+                },
+                nightlife: {
+                    venues: [
+                        { name: '水明漾酒吧街', desc: 'Bali最热闹的夜生活区，Double Six Club、Ku De Ta等高档酒吧林立', type: '酒吧街', price: '¥200-600' },
+                        { name: 'Sky Garden', desc: '乌鲁瓦图俯瞰海景的高端夜店，日落时分最美', type: '夜店', price: '¥300-800' },
+                        { name: 'Potato Head Beach Club', desc: '巴厘岛最网红的海边俱乐部，白天泳池Party晚上夜店', type: '海滩俱乐部', price: '¥400-1200' },
+                        { name: 'Mirror Club', desc: '超现代夜店，镜面反光设计，电子音乐', type: '夜店', price: '¥300-800' }
+                    ],
+                    tips: '水明漾凌晨2点最热闹，建议打Grab回酒店，夜晚海边注意安全'
+                },
+                activities: ['海滩日光浴', '冲浪', '浮潜深潜', 'SPA按摩', '瑜伽冥想', '帆船出海'],
+                shopping: ['Beachwalk购物中心', 'Discovery Mall', '水明漾街头小店', '乌布艺术市场', '苏卡瓦蒂艺术市场'],
+                restaurants: ['Locavore米其林餐厅', 'Mozaic乌布', 'Merah Putih印尼菜', '金巴兰海鲜烧烤排档', 'Naughty Nuri烤排骨'],
+                beach: ['科马纳海滩(Kuta)', '水明漾海滩(Seminyak)', '努沙杜瓦海滩(Nusa Dua)', '金巴兰海滩(Jimbaran)', '蓝梦岛', '努沙佩尼达'],
+                nightMarket: ['乌布夜市', '水明漾Night Market', '金巴兰海滩夜市'],
+                walkingStreet: ['乌布艺术街', '水明漾Eat Street', '科马纳人文海边步道'],
+                diving: ['蓝梦岛潜水', '努沙佩尼达曼塔角', '图兰奔珊瑚花园', 'USAT Liberty沉船'],
+                transport: {
+                    hub: true,
+                    island: true,
+                    hasAirport: true,
+                    airportName: '努古拉·莱·国际机场(DPS)',
+                    toOther: {
+                        '雅加达': '飞机1.5h',
+                        '日惹': '飞机1h',
+                        '龙目岛': '飞机30min/快船2-3h',
+                        '苏拉巴亚': '飞机50min'
+                    }
+                }
+            },
+            '雅加达': {
+                type: CityTypes.URBAN,
+                country: 'indonesia',
+                attractions: {
+                    morning: ['独立广场·国家纪念碑(Monas)', '国家博物馆', '科达老城区', '独立清真寺'],
+                    afternoon: ['安科尔梦幻乐园', '唐人街Glodok', 'PIK2网红街区', '曼达林购物区'],
+                    evening: ['Sudirman夜景', 'SCBD商圈', '圣淘沙类比特北京路'],
+                    night: ['SCBD酒吧区', 'Kemang酒吧街', '天空酒吧夜景'],
+                    food: ['Soto Betawi白牛肚汤', '炸鸭饭', '印尼炒饭', '烤玉米', 'Kerak Telor椰浆饭']
+                },
+                activities: ['城市观光', '购物', '美食体验', '科达历史老城'],
+                shopping: ['Grand Indonesia购物中心', 'Plaza Indonesia', 'Pondok Indah Mall', 'Blok M广场', '科达旧货市场'],
+                restaurants: ['Kilo Kitchen', 'Lara Djonggrang印尼文化餐厅', 'Sate Khas Senayan烤肉串', '唐人街Kwang Tung', '路边Warteg经济饭'],
+                beach: [],
+                nightMarket: ['Blok M夜市', 'Tanah Abang夜市', 'Cikini夜市'],
+                walkingStreet: ['科达老城区Kota Tua', 'Braga文化街', 'Kemang文艺区'],
+                transport: {
+                    hub: true,
+                    hasAirport: true,
+                    airportName: '苏加诺-哈达国际机场(CGK)',
+                    toOther: {
+                        '巴厘岛': '飞机1.5h',
+                        '日惹': '飞机1h/火车7h',
+                        '龙目岛': '飞机1.5h',
+                        '苏拉巴亚': '飞机1h'
+                    }
+                }
+            },
+            '日惹': {
+                type: CityTypes.CULTURE,
+                country: 'indonesia',
+                attractions: {
+                    morning: ['婆罗浮屠(世界奇迹)', '普兰班南神庙', '皇宫Kraton', '地下水宫Taman Sari'],
+                    afternoon: ['蜡染布工坊', '银器手工艺村', '乌布帝文化村', '默拉皮火山'],
+                    evening: ['马里奥波罗购物街夜市', '嘉来朗表演艺术', '日惹皇宫影子戏'],
+                    night: ['马里奥波罗路酒吧', '老城夜市', '爪哇文化表演'],
+                    food: ['Gudeg嫩菠萝蕾饭', '鸡肉饭Nasi Ayam', '烤肉串Satay', '马里奥波罗路小吃']
+                },
+                activities: ['世界遗产游览', '传统手工艺体验', '火山徒步', '文化演出观赏'],
+                shopping: ['马里奥波罗购物街', '贝林哈皇宫艺术品', '蜡染工坊', '银器手工艺品市场'],
+                restaurants: ['婆罗浮屠旁传统餐厅', 'Via Via爪哇美食', 'Milas素食', '马里奥波罗路路边摊'],
+                beach: [],
+                nightMarket: ['马里奥波罗夜市', '帕撒Beringharjo市场', '法雷比夜市'],
+                walkingStreet: ['马里奥波罗步行街', '皇宫老城区', '科博格博城堡周边'],
+                transport: {
+                    fromBali: '飞机1h',
+                    fromJakarta: '飞机1h/火车7h',
+                    hub: false,
+                    hasAirport: true,
+                    airportName: '阿迪苏纳普托机场(JOG)',
+                    toOther: {
+                        '巴厘岛': '飞机1h',
+                        '雅加达': '飞机1h/火车7h',
+                        '苏拉巴亚': '飞机45min/车程5h'
+                    }
+                }
+            },
+            '龙目岛': {
+                type: CityTypes.ISLAND,
+                country: 'indonesia',
+                attractions: {
+                    morning: ['林贾尼火山徒步', 'Kuta Lombok海滩', 'Mawun海湾', '赤道沙滩'],
+                    afternoon: ['吉利三岛跳岛', '吉利T潜水', '吉利A浮潜', '当地渔村参观'],
+                    evening: ['Kuta Lombok日落', '吉利T岛酒吧街', '海边烧烤'],
+                    night: ['吉利T夜店', '海滩篝火派对', '星空观赏'],
+                    food: ['烤海鲜', '龙目岛炒饭', '椰汁咖喱', '新鲜鱼料理']
+                },
+                activities: ['浮潜深潜', '火山徒步', '跳岛游', '冲浪', '海滩放松'],
+                shopping: ['Kuta Lombok手工艺品', '吉利T纪念品街', '本地蜡染布', '珍珠饰品'],
+                restaurants: ['吉利T海滩餐厅', 'Warung海鲜烤架', '林贾尼山脚咖啡馆', 'Kuta Lombok烤海鲜'],
+                beach: ['Kuta Lombok海滩', 'Tanjung Aan海湾', 'Selong Belanak海滩', '吉利T白沙滩'],
+                nightMarket: ['吉利T夜市', 'Kuta Lombok小市集'],
+                walkingStreet: ['吉利T海边步行道', 'Kuta Lombok艺术村'],
+                diving: ['吉利T海龟潜点', '吉利A浮潜珊瑚礁', '吉利M珊瑚花园', '深水沉船点'],
+                transport: {
+                    fromBali: '飞机30min/快船2-3h',
+                    fromJakarta: '飞机1.5h',
+                    hub: false,
+                    island: true,
+                    hasAirport: true,
+                    airportName: '国际禅普港机场(LOP)',
+                    toOther: {
+                        '巴厘岛': '飞机30min/快船2-3h',
+                        '雅加达': '飞机1.5h'
+                    }
+                }
+            },
+            '苏拉巴亚': {
+                type: CityTypes.URBAN,
+                country: 'indonesia',
+                attractions: {
+                    morning: ['英雄纪念碑', '印尼潜水艇博物馆', '阿拉伯街Ampel', '民族英雄博物馆'],
+                    afternoon: ['Ciputra World购物', '朱安达水族馆', '布拉卡自然保护区'],
+                    evening: ['G-Walk夜市美食街', '市中心夜景', 'THR马戏广场'],
+                    night: ['Surabaya酒吧区', 'Galaxy Mall美食广场', '大排档夜宵'],
+                    food: ['Rawon黑牛尾汤', '虾酱饭', '烤肉串Sate Klopo', 'Rujak水果沙拉']
+                },
+                activities: ['历史文化游', '购物', '美食探索', '中转跳板城市'],
+                shopping: ['Tunjungan Plaza', 'Ciputra World', 'Galaxy Mall', 'Pasar Atum传统市场'],
+                restaurants: ['Layar Resto河边餐厅', '华人区Rawon老店', '港口海鲜', 'Depot Sederhana传统饭馆'],
+                beach: [],
+                nightMarket: ['G-Walk美食夜市', 'Dupak Rukun夜市', 'Taman Bungkul广场'],
+                walkingStreet: ['阿拉伯街Ampel', '华人街Kembang Jepun', '英雄街步行区'],
+                transport: {
+                    fromBali: '飞机50min',
+                    fromJakarta: '飞机1h',
+                    hub: false,
+                    hasAirport: true,
+                    airportName: '朱安达国际机场(SUB)',
+                    toOther: {
+                        '巴厘岛': '飞机50min',
+                        '日惹': '飞机45min/车程5h',
+                        '雅加达': '飞机1h'
+                    }
                 }
             }
         };
@@ -1826,7 +2501,7 @@
 
         // 辅助函数
         function getCountryName(code) {
-            const names = { thailand: '泰国', vietnam: '越南', singapore: '新加坡', malaysia: '马来西亚', japan: '日本', korea: '韩国' };
+            const names = { thailand: '泰国', vietnam: '越南', singapore: '新加坡', malaysia: '马来西亚', indonesia: '印度尼西亚', japan: '日本', korea: '韩国' };
             return names[code] || code;
         }
         function getCountryPrices(code) {
@@ -1835,6 +2510,7 @@
                 vietnam: { flight: { min: 1200, max: 2800 }, hotel: { budget: 150, mid: 300, luxury: 600 }, food: { min: 60, max: 150 }, ticket: { min: 50, max: 200 } },
                 singapore: { flight: { min: 2000, max: 4500 }, hotel: { budget: 400, mid: 800, luxury: 1500 }, food: { min: 100, max: 300 }, ticket: { min: 200, max: 500 } },
                 malaysia: { flight: { min: 1800, max: 3800 }, hotel: { budget: 200, mid: 400, luxury: 800 }, food: { min: 80, max: 200 }, ticket: { min: 80, max: 250 } },
+                indonesia: { flight: { min: 1800, max: 4000 }, hotel: { budget: 200, mid: 400, luxury: 1200 }, food: { min: 60, max: 200 }, ticket: { min: 80, max: 300 } },
                 japan: { flight: { min: 2500, max: 5500 }, hotel: { budget: 400, mid: 800, luxury: 1500 }, food: { min: 150, max: 400 }, ticket: { min: 150, max: 500 } },
                 korea: { flight: { min: 1500, max: 3500 }, hotel: { budget: 300, mid: 600, luxury: 1200 }, food: { min: 100, max: 250 }, ticket: { min: 80, max: 300 } }
             };
@@ -1846,6 +2522,7 @@
                 vietnam: ['越南签证可落地签/电子签', '当地物价较低', '注意交通安全'],
                 singapore: ['新加坡免签30天', '禁止携带口香糖入境', '地铁和公交非常便利'],
                 malaysia: ['马来西亚免签30天', '多元文化国家，美食丰富', '英语普及度较高'],
+                indonesia: ['印尼需要办理落地签/电子签(约¥200)', '当地货币为印尼盾(IDR)，1人民币≈2200盾', '巴厘岛直飞约5.5小时，建议提前兑换现金'],
                 japan: ['需提前办理签证', 'JR Pass适合跨城市旅行', '垃圾分类严格'],
                 korea: ['济州岛免签', '首尔需办理签证', '购物可退税']
             };
@@ -1857,6 +2534,7 @@
                 vietnam: { from: '上海', hours: '3.5-4小时', note: '直飞河内/胡志明市约3.5-4小时' },
                 singapore: { from: '上海', hours: '5.5-6小时', note: '直飞新加坡约5.5-6小时' },
                 malaysia: { from: '上海', hours: '5-5.5小时', note: '直飞吉隆坡约5小时，飞沙巴约5.5小时' },
+                indonesia: { from: '上海', hours: '5.5-7小时', note: '直飞巴厘岛约6小时，飞雅加达约5.5小时，飞龙目岛约7小时' },
                 japan: { from: '上海', hours: '2-3.5小时', note: '飞东京约3小时，飞大阪约2.5小时' },
                 korea: { from: '上海', hours: '1.5-2小时', note: '飞首尔约2小时，飞釜山约1.5小时' }
             };
@@ -1932,14 +2610,15 @@
         // 目的地下拉变更
         const destIcons = {
             thailand: '🇹🇭', vietnam: '🇻🇳', singapore: '🇸🇬',
-            malaysia: '🇲🇾', japan: '🇯🇵', korea: '🇰🇷'
+            malaysia: '🇲🇾', indonesia: '🇮🇩', japan: '🇯🇵', korea: '🇰🇷'
         };
         const cityIcons = {
-            '曼谷': '🏛️', '清迈': '🏔️', '普吉岛': '🏝️', '芭提雅': '🌴',
-            '河内': '🏮', '岘港': '🌊', '芽庄': '🏖️', '胡志明市': '🌆',
+            '曼谷': '🏛️', '清迈': '🏔️', '普吉岛': '🏝️', '芭提雅': '🌴', '甲米': '🧗', '苏梅岛': '🥥', '大城': '🏛️', '华欣': '🏖️',
+            '河内': '🏮', '岘港': '🌊', '会安': '🏮', '芽庄': '🏖️', '胡志明市': '🌆', '富国岛': '🏝️', '顺化': '👑',
             '新加坡': '🦁',
-            '吉隆坡': '🏙️', '槟城': '🎨', '沙巴': '🐢', '马六甲': '🏛️',
-            '东京': '🗼', '大阪': '🏯', '京都': '⛩️', '北海道': '❄️',
+            '吉隆坡': '🏙️', '槟城': '🎨', '沙巴': '🐢', '兰卡威': '🦅', '新山': '🎢',
+            '巴厘岛': '🌺', '雅加达': '🕌', '日惹': '🏯', '龙目岛': '🌊', '苏拉巴亚': '⚓',
+            '东京': '🗼', '大阪': '🏯', '京都': '⛩️', '北海道': '❄️', '冲绳': '🐠', '奈良': '🦌', '神户': '🥩',
             '首尔': '💄', '釜山': '🏖️', '济州岛': '🌋'
         };
         const styleNames = {
@@ -2400,7 +3079,12 @@
             '冲绳': ['https://images.unsplash.com/photo-1615465297118-2a4a52a30b27?w=400','https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400','https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400','https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400'],
             '首尔': ['https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400','https://images.unsplash.com/photo-1601581875039-e899893d520c?w=400','https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400','https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400','https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=400'],
             '釜山': ['https://images.unsplash.com/photo-1596627623061-4052b9689c5f?w=400','https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=400','https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400','https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400','https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=400'],
-            '济州岛': ['https://images.unsplash.com/photo-1615465297118-2a4a52a30b27?w=400','https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400','https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400','https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400','https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400']
+            '济州岛': ['https://images.unsplash.com/photo-1615465297118-2a4a52a30b27?w=400','https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400','https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400','https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400','https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400'],
+            '巴厘岛': ['https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400','https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400','https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'],
+            '雅加达': ['https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=400','https://images.unsplash.com/photo-1565967511849-76a60a516170?w=400','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400','https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400','https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400'],
+            '日惹': ['https://images.unsplash.com/photo-1596700834749-c3dd77dcc3a3?w=400','https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=400','https://images.unsplash.com/photo-1565967511849-76a60a516170?w=400','https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400','https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400'],
+            '龙目岛': ['https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400','https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400','https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400','https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400','https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400'],
+            '苏拉巴亚': ['https://images.unsplash.com/photo-1565967511849-76a60a516170?w=400','https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=400','https://images.unsplash.com/photo-1596700834749-c3dd77dcc3a3?w=400','https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400','https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400']
         };
 
         // 全局已使用景点记录（用于去重）
@@ -2421,18 +3105,43 @@
             const citySequence = generateCitySequence(coreCity, days, style);
 
             for (let i = 1; i <= days; i++) {
-                const city = citySequence[i - 1];
+                let city = citySequence[i - 1];
+                let isAirportReturn = false;
+                let airportCity = '';
+                
+                // 处理特殊标记：__AIRPORT__城市名 表示从该城市机场返程
+                if (typeof city === 'string' && city.startsWith('__AIRPORT__')) {
+                    isAirportReturn = true;
+                    airportCity = city.replace('__AIRPORT__', '');
+                    // 显示为返程，实际城市是前一个城市（当天从那里出发去机场）
+                    // 注意：__AIRPORT__ 只可能出现在最后一天，所以 i > 1 一定成立
+                    const prevItem = citySequence[i - 2];
+                    city = (typeof prevItem === 'string' && prevItem.startsWith('__AIRPORT__'))
+                        ? prevItem.replace('__AIRPORT__', '')
+                        : prevItem;
+                }
+                
                 const cityData = cityDatabase[city];
+                if (!cityData) {
+                    console.error(`城市数据不存在: ${city}`);
+                    continue; // 跳过这个城市
+                }
                 const isCoreCity = (city === coreCity);
                 const isFirstDay = (i === 1);
-                const isLastDay = (i === days);
+                const isLastDay = (i === days) || isAirportReturn;
                 
                 // 检测城市切换，添加交通信息
                 let transportInfo = '';
                 if (i > 1) {
-                    const prevCity = citySequence[i - 2];
-                    if (prevCity !== city) {
+                    const prevCityRaw = citySequence[i - 2];
+                    const prevCity = typeof prevCityRaw === 'string' && prevCityRaw.startsWith('__AIRPORT__') 
+                        ? prevCityRaw.replace('__AIRPORT__', '') 
+                        : prevCityRaw;
+                    if (prevCity !== city && !isAirportReturn) {
                         transportInfo = generateTransportInfo(prevCity, city);
+                    } else if (isAirportReturn) {
+                        // 最后一天去机场
+                        transportInfo = generateTransportInfo(city, airportCity, true);
                     }
                 }
 
@@ -2461,9 +3170,21 @@
                 else dayTag = '<span class="recommend-badge" style="background: #2196F3;">周边</span>';
 
                 // 生成当日活动 - 传入前一个和下一个城市
-                const prevCity = (i > 1) ? citySequence[i - 2] : null;
-                const nextCity = (i < days) ? citySequence[i] : null;
-                const isFirstDayInCity = (i === 1) || (city !== citySequence[i - 2]);
+                const prevCityRaw = (i > 1) ? citySequence[i - 2] : null;
+                const nextCityRaw = (i < days) ? citySequence[i] : null;
+                
+                // 处理特殊标记 - 将机场标记转换为城市名
+                const processCityCode = (cityCode) => {
+                    if (typeof cityCode === 'string' && cityCode.startsWith('__AIRPORT__')) {
+                        return cityCode.replace('__AIRPORT__', '');
+                    }
+                    return cityCode;
+                };
+                
+                const prevCity = processCityCode(prevCityRaw);
+                const nextCity = processCityCode(nextCityRaw);
+                    
+                const isFirstDayInCity = (i === 1) || (city !== prevCity);
                 const activities = generateSmartDayActivities(city, cityData, i, isFirstDay, isLastDay, nextCity, prevCity, isFirstDayInCity);
 
                 html += `
@@ -2498,12 +3219,18 @@
             const country = coreData.country;
             const isCoreIsland = coreData.type === CityTypes.ISLAND && coreData.transport?.island;
 
-            // 获取同国家其他城市
-            const otherCities = Object.keys(cityDatabase).filter(c => 
-                cityDatabase[c].country === country && c !== coreCity
-            );
+            // 获取同国家其他城市 + 跨境城市对中的城市
+            const crossBorderCities = crossBorderPairs[coreCity] || [];
+            const otherCities = Object.keys(cityDatabase).filter(c => {
+                if (c === coreCity) return false;
+                // 同国家城市
+                if (cityDatabase[c].country === country) return true;
+                // 跨境城市对中的城市
+                if (crossBorderCities.includes(c)) return true;
+                return false;
+            });
 
-            // 核心城市是海岛（如苏梅岛、普吉岛）- 特殊处理
+            // 核心城市是海岛（如巴厘岛、普吉岛）- 特殊处理
             if (isCoreIsland) {
                 return generateIslandBasedSequence(coreCity, days, style, otherCities);
             }
@@ -2512,64 +3239,106 @@
             return generateMainlandSequence(coreCity, days, style, otherCities);
         }
 
-        // 海岛为核心城市的序列生成（如苏梅岛、普吉岛、富国岛）
-        // 核心原则：到了海岛就待在海岛！不折腾！
+        // ==================================================================
+        // 海岛为核心城市的序列生成（如巴厘岛、普吉岛、龙目岛）
+        // 核心原则：海岛本身就是目的地，采用"基地岛"模式
+        // ==================================================================
         function generateIslandBasedSequence(coreCity, days, style, otherCities) {
-            const sequence = [coreCity];
+            const sequence = [];
             const coreData = cityDatabase[coreCity];
+            
+            // 获取有机场的陆地城市作为可能的进出点
+            const mainlandHubs = otherCities.filter(c => {
+                const data = cityDatabase[c];
+                return data.transport?.hub && !(data.type === CityTypes.ISLAND && data.transport?.island);
+            });
             
             // 海岛旅游的核心原则：
             // 1. 度假游(relax)：全程在海岛，哪也不去
-            // 2. 适中(balanced)：全程在海岛，哪也不去（海岛本身够玩）
-            // 3. 打卡游(active)：只有天数>=7且用户明确要求，才考虑海岛+陆地城市
+            // 2. 适中(balanced)：全程在海岛，最多搭配1个附近海岛
+            // 3. 打卡游(active)：海岛为主，可以搭配陆地城市（但需预留交通日）
             
-            // 只有打卡游风格且天数>=7，才考虑搭配陆地城市
-            const canAddMainland = (style === 'active' && days >= 7);
-            
-            if (!canAddMainland) {
-                // 纯海岛度假 - 全程在海岛，不折腾！
-                for (let i = 1; i < days; i++) {
+            // 度假游：纯海岛，不折腾
+            if (style === 'relax') {
+                for (let i = 0; i < days; i++) {
                     sequence.push(coreCity);
                 }
-            } else {
-                // 打卡游且天数充足：海岛 + 陆地城市
-                // 但必须预留完整的交通日
-                const mainlandCities = otherCities.filter(c => {
+                return sequence;
+            }
+            
+            // 适中：海岛为主，可能搭配1个附近海岛
+            if (style === 'balanced') {
+                // 寻找附近的其他海岛（如巴厘岛+龙目岛）
+                const nearbyIslands = otherCities.filter(c => {
                     const data = cityDatabase[c];
-                    return !(data.type === CityTypes.ISLAND && data.transport?.island);
+                    return data.type === CityTypes.ISLAND && data.transport?.island;
                 });
                 
-                if (mainlandCities.length === 0) {
-                    // 没有合适的陆地城市，全程海岛
-                    for (let i = 1; i < days; i++) {
-                        sequence.push(coreCity);
-                    }
-                } else {
-                    const mainlandCity = mainlandCities[0];
-                    // 7天安排：海岛3天 → 飞陆地2天 → 回海岛1天（返程）
-                    // 8天安排：海岛3天 → 飞陆地3天 → 回海岛1天（返程）
-                    const mainlandDays = Math.min(3, Math.floor((days - 2) / 2));
-                    const islandDaysBefore = days - mainlandDays - 1; // 留1天回海岛返程
+                // 只有天数>=5且有附近海岛，才考虑跳岛
+                if (days >= 5 && nearbyIslands.length > 0) {
+                    const island2 = nearbyIslands[0];
+                    const transport = getTransportInfo(coreCity, island2);
+                    const isShortFerry = transport && (transport.includes('快船') || transport.includes('船')) && 
+                                         !transport.includes('飞机');
                     
-                    // 海岛前几天
-                    for (let i = 1; i < islandDaysBefore; i++) {
-                        sequence.push(coreCity);
+                    // 只有短途船程才考虑跳岛
+                    if (isShortFerry) {
+                        // 5天：海岛A 3天 → 船程 → 海岛B 2天
+                        // 6天：海岛A 3天 → 船程 → 海岛B 3天
+                        const daysInCore = Math.ceil(days * 0.6);
+                        const daysInIsland2 = days - daysInCore;
+                        
+                        for (let i = 0; i < daysInCore; i++) sequence.push(coreCity);
+                        for (let i = 0; i < daysInIsland2; i++) sequence.push(island2);
+                        return sequence;
                     }
-                    
-                    // 陆地城市
-                    for (let i = 0; i < mainlandDays; i++) {
-                        sequence.push(mainlandCity);
-                    }
-                    
-                    // 最后1天回海岛（方便返程）
-                    sequence.push(coreCity);
                 }
+                
+                // 不跳岛，全程核心海岛
+                for (let i = 0; i < days; i++) sequence.push(coreCity);
+                return sequence;
             }
-
+            
+            // 打卡游(active)：可以海岛+陆地城市，但需合理规划
+            // 只有天数>=6才考虑搭配陆地城市
+            if (days >= 6 && mainlandHubs.length > 0) {
+                const mainlandHub = mainlandHubs[0]; // 选择主要陆地枢纽
+                const transport = getTransportInfo(coreCity, mainlandHub);
+                const isFlight = transport && transport.includes('飞机');
+                
+                // 飞机往返需要预留2个半天，实际损失1.5天
+                // 6天：海岛3天 → 飞陆地2天 → 回海岛1天（返程）
+                // 7天：海岛3天 → 飞陆地3天 → 回海岛1天（返程）
+                // 8天+：海岛4天 → 飞陆地3天 → 回海岛1天（返程）
+                
+                const travelOverhead = isFlight ? 1 : 0.5; // 飞机需要更多缓冲
+                const effectiveDays = days - travelOverhead;
+                const mainlandDays = Math.min(3, Math.floor(effectiveDays * 0.4));
+                const islandDays = effectiveDays - mainlandDays;
+                
+                // 海岛前几天（连续住，不折腾）
+                const islandDaysFirst = Math.ceil(islandDays * 0.7);
+                for (let i = 0; i < islandDaysFirst; i++) sequence.push(coreCity);
+                
+                // 陆地城市
+                for (let i = 0; i < mainlandDays; i++) sequence.push(mainlandHub);
+                
+                // 最后回海岛（方便返程，最后一天）
+                const islandDaysLast = islandDays - islandDaysFirst;
+                for (let i = 0; i < islandDaysLast; i++) sequence.push(coreCity);
+                
+                return sequence;
+            }
+            
+            // 默认：全程海岛
+            for (let i = 0; i < days; i++) sequence.push(coreCity);
             return sequence;
         }
 
-        // 陆地城市为核心城市的序列生成
+        // ==================================================================
+        // 陆地城市为核心城市的序列生成（如东京、大阪、曼谷）
+        // 核心原则：首末两天固定核心城市，中间穿插其他城市
+        // ==================================================================
         function generateMainlandSequence(coreCity, days, style, otherCities) {
             const coreData = cityDatabase[coreCity];
             
@@ -2579,135 +3348,364 @@
             
             let sequence = [];
             
-            // 如果核心城市没有机场，首日住在最近的机场城市
+            // ================================================================
+            // 场景1: 核心城市无机场（如京都）
+            // 第1天：住最近的机场城市（如大阪）
+            // 第2天起：前往核心城市
+            // 最后1天：回机场城市返程
+            // ================================================================
             if (!hasAirport && nearestAirport) {
-                // 计算核心城市最少应该停留的天数（根据风格）
-                const minCoreDays = style === 'relax' ? Math.max(3, days - 2) : 
-                                   (style === 'balanced' ? Math.max(2, Math.floor((days - 2) / 2)) : Math.max(1, Math.floor((days - 2) / 3)));
-                
-                // 预留天数：第1天机场城市 + 最后1天回机场城市 + 核心城市最少天数
-                const reservedDays = 2 + minCoreDays;
-                const availableDaysForOthers = days - reservedDays;
-                
-                sequence.push(nearestAirport.city); // 第1天：住机场城市
-                
-                // 第2天：从机场城市前往核心城市（转移日，中午/下午到达）
-                sequence.push(coreCity);
-                
-                // 核心城市连续停留天数（至少minCoreDays天）
-                let coreDaysRemaining = minCoreDays - 1; // 第2天已算1天
-                
-                // 筛选可搭配的城市
-                const compatibleCities = filterCompatibleCities(coreCity, style, otherCities, coreData, days);
-                
-                // 如果有足够的剩余天数，安排周边城市
-                if (compatibleCities.length > 0 && availableDaysForOthers > 0) {
-                    const maxCities = style === 'relax' ? 0 : (style === 'balanced' ? 1 : 2);
-                    const cityCount = Math.min(maxCities, compatibleCities.length, Math.floor(availableDaysForOthers / 2));
-                    
-                    // 先完成核心城市的最少天数
-                    while (coreDaysRemaining > 0) {
-                        sequence.push(coreCity);
-                        coreDaysRemaining--;
-                    }
-                    
-                    // 然后安排周边城市（每个城市至少2天）
-                    let remainingDaysForOthers = days - sequence.length - 1; // 预留最后1天回机场
-                    for (let i = 0; i < cityCount && remainingDaysForOthers >= 2; i++) {
-                        // 去周边城市（转移日）
-                        sequence.push(compatibleCities[i]);
-                        remainingDaysForOthers--;
-                        
-                        // 在周边城市停留（至少1天）
-                        const daysInCity = Math.min(2, remainingDaysForOthers);
-                        for (let d = 0; d < daysInCity; d++) {
-                            sequence.push(compatibleCities[i]);
-                            remainingDaysForOthers--;
-                        }
-                        
-                        // 返回核心城市（转移日）
-                        if (remainingDaysForOthers > 0) {
-                            sequence.push(coreCity);
-                            remainingDaysForOthers--;
-                        }
-                    }
-                    
-                    // 剩余天数继续在核心城市
-                    while (remainingDaysForOthers > 0) {
-                        sequence.push(coreCity);
-                        remainingDaysForOthers--;
-                    }
-                } else {
-                    // 没有周边城市或天数不够，全部在核心城市
-                    while (coreDaysRemaining > 0) {
-                        sequence.push(coreCity);
-                        coreDaysRemaining--;
-                    }
-                    
-                    // 剩余天数也在核心城市
-                    let remainingDays = days - sequence.length - 1;
-                    while (remainingDays > 0) {
-                        sequence.push(coreCity);
-                        remainingDays--;
-                    }
-                }
-                
-                // 最后1天必须回到机场城市（方便返程）
-                sequence.push(nearestAirport.city);
-            } else {
-                // 核心城市有机场，正常安排
-                sequence = [coreCity];
-                
-                // 根据风格和天数决定城市数量
-                let maxCities = 2;
-                if (style === 'balanced') maxCities = Math.min(3, Math.ceil(days / 2));
-                if (style === 'active') maxCities = Math.min(otherCities.length + 1, Math.ceil(days / 1.5));
+                return generateNoAirportSequence(coreCity, days, style, otherCities, nearestAirport);
+            }
+            
+            // ================================================================
+            // 场景2: 核心城市有机场（如东京、曼谷）
+            // 第1天：核心城市（抵达）
+            // 中间：根据风格穿插其他城市
+            // 最后1天：核心城市（返程）
+            // ================================================================
+            return generateHubAirportSequence(coreCity, days, style, otherCities, coreData);
+        }
 
-                const compatibleCities = filterCompatibleCities(coreCity, style, otherCities, coreData, days);
-
-                // 安排中间城市
-                const middleDays = days - 2;
-                if (middleDays > 0 && compatibleCities.length > 0 && maxCities > 1) {
-                    const cityCount = Math.min(maxCities - 1, compatibleCities.length);
-                    const selectedCities = compatibleCities.slice(0, cityCount);
-
-                    const daysPerCity = Math.floor(middleDays / (selectedCities.length + 1));
-                    let remainingDays = middleDays;
-
-                    for (let i = 0; i < selectedCities.length; i++) {
-                        const daysInThisCity = (i === selectedCities.length - 1) ? remainingDays - 1 : Math.max(1, daysPerCity);
-                        for (let d = 0; d < daysInThisCity; d++) {
-                            sequence.push(selectedCities[i]);
-                        }
-                        remainingDays -= daysInThisCity;
-                    }
-
-                    for (let d = 0; d < remainingDays; d++) {
-                        sequence.push(coreCity);
-                    }
-                } else {
-                    for (let i = 1; i < days - 1; i++) {
-                        sequence.push(coreCity);
-                    }
-                }
-
-                // 最后一天回核心城市
+        // 核心城市无机场时的序列生成
+        // 策略：机场城市（如曼谷）可以作为附带城市，采用"机场城市→核心城市→机场城市"模式
+        function generateNoAirportSequence(coreCity, days, style, otherCities, nearestAirport) {
+            const sequence = [];
+            const coreData = cityDatabase[coreCity];
+            const airportCity = nearestAirport.city;
+            
+            // 如果只有1-2天，简单处理：全部在核心城市，最后一天去机场
+            if (days <= 2) {
+                for (let i = 0; i < days - 1; i++) sequence.push(coreCity);
+                sequence.push(`__AIRPORT__${airportCity}`);
+                return sequence;
+            }
+            
+            // ============================================
+            // 新策略：机场城市作为附带城市
+            // 模式：机场城市(1-2晚) → 核心城市(2-3晚) → 机场城市(剩余天数，最后返程)
+            // ============================================
+            
+            // 检查机场城市是否值得游览（如曼谷）
+            const airportCityData = cityDatabase[airportCity];
+            const isAirportCityWorthVisiting = airportCityData && (
+                airportCityData.transport?.hub || 
+                (airportCityData.attractions?.morning?.length || 0) >= 6
+            );
+            
+            // 根据风格决定分配
+            let airportNightsBefore, coreNights, airportNightsAfter;
+            
+            if (style === 'relax') {
+                // 度假游：核心城市为主，机场城市只作为中转
+                airportNightsBefore = 1;
+                coreNights = Math.max(3, days - 2);
+                airportNightsAfter = days - airportNightsBefore - coreNights;
+            } else if (style === 'balanced') {
+                // 适中：机场城市1-2晚 → 核心城市2-3晚 → 机场城市剩余
+                // 6天5晚示例：曼谷1晚 → 芭提雅2晚 → 曼谷2晚（含返程日）
+                airportNightsBefore = Math.min(2, Math.floor(days * 0.25));  // 前段住1-2晚
+                coreNights = Math.min(3, Math.floor(days * 0.5));  // 核心城市2-3晚
+                airportNightsAfter = days - airportNightsBefore - coreNights;  // 剩余给机场城市
+            } else { // active
+                // 打卡游：快速游览，多跑城市
+                airportNightsBefore = 1;
+                coreNights = Math.min(2, Math.floor(days * 0.4));
+                airportNightsAfter = days - airportNightsBefore - coreNights;
+            }
+            
+            // 确保至少有一天在核心城市
+            if (coreNights < 2) {
+                coreNights = 2;
+                airportNightsAfter = days - airportNightsBefore - coreNights;
+            }
+            
+            // 阶段1：先住机场城市（如曼谷）
+            for (let i = 0; i < airportNightsBefore; i++) {
+                sequence.push(airportCity);
+            }
+            
+            // 阶段2：核心城市（如芭提雅）
+            for (let i = 0; i < coreNights; i++) {
                 sequence.push(coreCity);
             }
+            
+            // 阶段3：筛选其他周边城市（排除机场城市，因为已经安排过了）
+            const otherCitiesExcludingAirport = otherCities.filter(c => c !== airportCity);
+            const compatibleCities = filterCompatibleCities(coreCity, style, otherCitiesExcludingAirport, coreData, days);
+            
+            let remainingDays = days - sequence.length - 1; // 预留最后1天给机场返程
+            let extraCount = 0;
+            const maxExtras = style === 'relax' ? 0 : (style === 'balanced' ? 2 : 3);
+            
+            // 安排其他周边城市（如大城、华欣等）
+            // 规则：至少住1晚，值得的城市住2晚，返程最早第二天下午
+            for (const extraCity of compatibleCities) {
+                // 需要至少2天：1天去+至少1天住，且预留1天回机场城市
+                if (remainingDays < 3 || extraCount >= maxExtras) break;
+                
+                // 去周边城市（第1天：抵达）
+                sequence.push(extraCity);
+                remainingDays--;
+                
+                // 停留天数：至少1晚，值得的城市住2晚
+                let stayNights;
+                const cityData = cityDatabase[extraCity];
+                const isHighValue = isCityHighValue(extraCity, cityData);
+                
+                if (style === 'active') {
+                    // 打卡游：值得的城市住2晚，其他住1晚
+                    stayNights = isHighValue ? Math.min(2, remainingDays - 1) : 1;
+                } else {
+                    // 适中/度假：值得的城市住2晚，其他至少1晚
+                    stayNights = isHighValue ? Math.min(2, remainingDays - 1) : 1;
+                }
+                
+                // 确保至少住1晚
+                stayNights = Math.max(1, stayNights);
+                
+                for (let i = 0; i < stayNights && remainingDays > 1; i++) {
+                    sequence.push(extraCity);
+                    remainingDays--;
+                }
+                
+                extraCount++;
+            }
+            
+            // 阶段4：返回机场城市（如曼谷），住剩余天数，最后返程
+            // 如果还有剩余天数，先住机场城市
+            while (sequence.length < days - 1) {
+                sequence.push(airportCity);
+            }
+            
+            // 最后1天：从机场城市返程
+            sequence.push(`__AIRPORT__${airportCity}`);
+            
+            return sequence;
+        }
+        
+        // 判断城市是否高价值（值得多住）
+        function isCityHighValue(cityName, cityData) {
+            if (!cityData) return false;
+            const attractions = cityData.attractions || {};
+            const totalAttractions = (attractions.morning?.length || 0) + 
+                                    (attractions.afternoon?.length || 0) + 
+                                    (attractions.evening?.length || 0);
+            return totalAttractions >= 10 || cityData.transport?.hub;
+        }
 
+        // 核心城市有机场时的序列生成
+        function generateHubAirportSequence(coreCity, days, style, otherCities, coreData) {
+            const sequence = [];
+            
+            // 第1天：核心城市（抵达）
+            sequence.push(coreCity);
+            
+            // 如果只有1-2天，全程核心城市
+            if (days <= 2) {
+                while (sequence.length < days) sequence.push(coreCity);
+                return sequence;
+            }
+            
+            // 中间天数（去掉第1天和最后1天）
+            const middleDays = days - 2;
+            
+            // 筛选可搭配的周边城市
+            const compatibleCities = filterCompatibleCities(coreCity, style, otherCities, coreData, days);
+            
+            // ============================================
+            // 根据旅行风格决定城市分配策略
+            // ============================================
+            
+            if (style === 'relax') {
+                // 度假游：全程核心城市，不去周边
+                for (let i = 0; i < middleDays; i++) sequence.push(coreCity);
+            } 
+            else if (style === 'balanced') {
+                // 适中：核心城市占60%，最多1个周边城市
+                const minCoreMiddleDays = Math.max(1, Math.floor(middleDays * 0.6));
+                const maxCities = Math.min(1, compatibleCities.length);
+                
+                if (maxCities === 0 || middleDays < 3) {
+                    for (let i = 0; i < middleDays; i++) sequence.push(coreCity);
+                } else {
+                    // 策略：核心 → 周边 → 回核心
+                    const coreDaysFirst = Math.max(1, Math.ceil(minCoreMiddleDays * 0.6));
+                    for (let i = 0; i < coreDaysFirst; i++) sequence.push(coreCity);
+                    
+                    let remaining = middleDays - coreDaysFirst;
+                    
+                    for (const extraCity of compatibleCities.slice(0, maxCities)) {
+                        if (remaining < 2) break;
+                        
+                        sequence.push(extraCity); // 转移日
+                        remaining--;
+                        
+                        if (remaining > 1) {
+                            sequence.push(extraCity); // 停留1天
+                            remaining--;
+                        }
+                        
+                        if (remaining > 0) {
+                            sequence.push(coreCity); // 回核心
+                            remaining--;
+                        }
+                    }
+                    
+                    while (remaining > 0) {
+                        sequence.push(coreCity);
+                        remaining--;
+                    }
+                }
+            } 
+            else if (style === 'active') {
+                // ============================================
+                // 打卡游：最大化多城市游览！
+                // ============================================
+                // 核心城市最多占40%，尽可能多去周边城市
+                
+                const maxCoreDays = Math.max(2, Math.ceil(middleDays * 0.4)); // 核心城市最多40%
+                const minCities = Math.min(compatibleCities.length, Math.floor(middleDays / 2)); // 尽可能多安排城市
+                
+                if (compatibleCities.length === 0 || middleDays < 2) {
+                    // 没有可搭配的周边城市
+                    for (let i = 0; i < middleDays; i++) sequence.push(coreCity);
+                } else {
+                    let remaining = middleDays;
+                    let coreDaysUsed = 0;
+                    let citiesAdded = 0;
+                    
+                    // 打卡游策略：快速游览核心城市 → 尽可能多去周边 → 最后回核心
+                    
+                    // 第1天在核心城市（快速打卡）
+                    sequence.push(coreCity);
+                    coreDaysUsed++;
+                    remaining--;
+                    
+                    // 尽可能多地安排周边城市，每个城市至少1晚，值得的城市2晚
+                    for (const extraCity of compatibleCities) {
+                        // 需要至少3天：1天去+至少1天住+1天回核心/返程
+                        if (remaining < 3) break;
+                        
+                        // 去周边城市（第1天：抵达）
+                        sequence.push(extraCity);
+                        remaining--;
+                        citiesAdded++;
+                        
+                        // 停留天数：至少1晚，值得的城市住2晚
+                        const cityData = cityDatabase[extraCity];
+                        const isHighValue = isCityHighValue(extraCity, cityData);
+                        let stayNights = isHighValue ? Math.min(2, remaining - 1) : 1;
+                        stayNights = Math.max(1, stayNights); // 确保至少1晚
+                        
+                        for (let i = 0; i < stayNights && remaining > 1; i++) {
+                            sequence.push(extraCity);
+                            remaining--;
+                        }
+                        
+                        // 如果还有空间且核心城市天数还没用完，回核心中转
+                        if (remaining > 2 && coreDaysUsed < maxCoreDays && citiesAdded % 2 === 0) {
+                            sequence.push(coreCity);
+                            remaining--;
+                            coreDaysUsed++;
+                        }
+                    }
+                    
+                    // 剩余天数在核心城市（最后1天必须在核心）
+                    while (remaining > 0) {
+                        sequence.push(coreCity);
+                        remaining--;
+                    }
+                }
+            }
+            
+            // 最后1天：核心城市（返程）
+            sequence.push(coreCity);
+            
             return sequence;
         }
 
         // 筛选可搭配的城市
+        // 评估城市是否值得作为中间目的地（必须有足够的核心景点）
+        function isCityWorthVisiting(cityName, cityData) {
+            // 计算城市核心景点数量
+            const attractions = cityData.attractions || {};
+            let coreAttractionCount = 0;
+            
+            // 统计主要景点（上午、下午、晚上的核心景点）
+            const morning = attractions.morning || [];
+            const afternoon = attractions.afternoon || [];
+            const evening = attractions.evening || [];
+            const night = attractions.night || [];
+            
+            coreAttractionCount = morning.length + afternoon.length + evening.length + night.length;
+            
+            // 判断城市等级
+            const isHub = cityData.transport?.hub === true;
+            const hasAirport = cityData.transport?.hasAirport || cityData.transport?.hub;
+            const isIsland = cityData.type === CityTypes.ISLAND;
+            const isSeasonal = cityData.transport?.seasonal === true;
+            
+            // 核心城市标准：
+            // 1. 交通枢纽城市（hub）- 通常是核心目的地
+            // 2. 季节性目的地（如北海道）- 本身就是核心目的地
+            // 3. 海岛城市 - 通常是核心度假地
+            // 4. 景点数量 >= 8个的才算值得单独去
+            
+            if (isHub || isSeasonal) {
+                return { worth: false, reason: 'hub_city', level: 'primary' }; // 本身是核心城市，不适合作为周边
+            }
+            
+            if (isIsland) {
+                return { worth: false, reason: 'island_destination', level: 'primary' }; // 海岛是核心目的地
+            }
+            
+            if (coreAttractionCount < 6) {
+                return { worth: false, reason: 'too_few_attractions', level: 'low' }; // 景点太少
+            }
+            
+            // 根据景点数量分级
+            if (coreAttractionCount >= 10) {
+                return { worth: true, reason: 'rich_attractions', level: 'high', count: coreAttractionCount };
+            } else if (coreAttractionCount >= 8) {
+                return { worth: true, reason: 'good_attractions', level: 'medium', count: coreAttractionCount };
+            } else {
+                return { worth: true, reason: 'basic_attractions', level: 'basic', count: coreAttractionCount };
+            }
+        }
+
+        // 跨境城市对定义（这些城市即使对方是hub也应该可以互相安排）
+        const crossBorderPairs = {
+            '新山': ['新加坡'],
+            '新加坡': ['新山']
+        };
+
         function filterCompatibleCities(coreCity, style, otherCities, coreData, days) {
             return otherCities.filter(c => {
                 const cityData = cityDatabase[c];
                 
                 let transportInfo = '';
+                // 1. 从核心城市的toOther查找
                 if (coreData.transport?.toOther?.[c]) {
                     transportInfo = coreData.transport.toOther[c];
-                } else if (cityData.transport?.fromOther?.[coreCity]) {
+                } 
+                // 2. 从目标城市的fromOther查找
+                else if (cityData.transport?.fromOther?.[coreCity]) {
                     transportInfo = cityData.transport.fromOther[coreCity];
+                }
+                // 3. 从目标城市的fromXXX字段查找（如fromTokyo, fromOsaka）
+                else {
+                    const fromField = `from${coreCity}`;
+                    if (cityData.transport?.[fromField]) {
+                        transportInfo = cityData.transport[fromField];
+                    }
+                }
+                // 4. 从核心城市的fromXXX字段反向查找
+                if (!transportInfo) {
+                    const fromField = `from${c}`;
+                    if (coreData.transport?.[fromField]) {
+                        transportInfo = coreData.transport[fromField];
+                    }
                 }
                 
                 if (!transportInfo) return false;
@@ -2719,35 +3717,84 @@
                 // 判断是否为飞机
                 const isFlight = transportInfo.includes('飞机');
                 
-                // 度假游：只接受陆路，且2小时内
+                // ========== 关键：评估城市是否值得去 ==========
+                const worthCheck = isCityWorthVisiting(c, cityData);
+                
+                // 检查是否为跨境城市对（如 新山-新加坡）
+                const isCrossBorder = crossBorderPairs[coreCity]?.includes(c);
+                
+                // 枢纽城市、季节性目的地、海岛 - 不能作为周边城市（本身就是核心目的地）
+                // 例外：跨境城市对（如新山-新加坡）即使对方是hub也应该可以安排
+                if (!worthCheck.worth && worthCheck.level === 'primary' && !isCrossBorder) {
+                    return false;
+                }
+                
+                // 景点太少的城市不值得单独去
+                if (!worthCheck.worth && worthCheck.reason === 'too_few_attractions') {
+                    return false;
+                }
+                
+                // 度假游：只接受陆路，且2小时内，且必须是有价值的城市
                 if (style === 'relax') {
                     if (isFlight) return false;
-                    return hours <= 2;
+                    if (hours > 2) return false;
+                    // 度假游只去高价值城市
+                    return worthCheck.worth && worthCheck.level === 'high';
                 }
                 
-                // 适中：接受陆路3小时内，或短程飞机（1小时内）
+                // 适中：接受陆路3小时内，或短程飞机（1小时内），必须值得去
                 if (style === 'balanced') {
+                    // 跨境城市对（如新山-新加坡）特殊处理：即使对方是hub也允许
+                    if (isCrossBorder && hours <= 3) return true;
+                    
                     if (isFlight) {
-                        return hours <= 1; // 只接受1小时内的短程飞行
+                        return hours <= 1 && worthCheck.worth; // 只接受1小时内的短程飞行
                     }
-                    return hours <= 3;
+                    return hours <= 3 && worthCheck.worth;
                 }
                 
-                // 多城市打卡：接受陆路5小时内，或飞机（但要确保天数充足）
+                // 多城市打卡：接受陆路5小时内，或飞机（但要确保天数充足且城市值得去）
                 if (style === 'active') {
+                    // 跨境城市对（如新山-新加坡）特殊处理：即使对方是hub也允许
+                    if (isCrossBorder && hours <= 3) return true;
+                    
                     // 飞机需要至少5天才能安排跨城
                     if (isFlight && days < 5) return false;
                     // 长距离陆路（4-5小时）也需要至少5天
                     if (hours > 3 && days < 5) return false;
-                    return hours <= 5;
+                    return hours <= 5 && worthCheck.worth;
                 }
                 
                 return false;
+            }).sort((a, b) => {
+                // 按景点数量排序，优先选择景点多的城市
+                const worthA = isCityWorthVisiting(a, cityDatabase[a]);
+                const worthB = isCityWorthVisiting(b, cityDatabase[b]);
+                return (worthB.count || 0) - (worthA.count || 0);
             });
         }
 
         // 生成交通信息HTML
-        function generateTransportInfo(fromCity, toCity) {
+        // isToAirport: 是否为前往机场返程
+        function generateTransportInfo(fromCity, toCity, isToAirport = false) {
+            // 如果是前往机场返程，使用特殊样式
+            if (isToAirport) {
+                return `
+                    <div class="transport-info" style="
+                        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 12px;
+                        margin: 15px 0;
+                        text-align: center;
+                        font-weight: 600;
+                    ">
+                        <span style="font-size: 20px;">✈️</span>
+                        <span>前往${toCity}机场 · 返程回国</span>
+                    </div>
+                `;
+            }
+            
             const fromData = cityDatabase[fromCity];
             const toData = cityDatabase[toCity];
             
@@ -2756,12 +3803,24 @@
             let icon = '✈️';
             
             // 查找交通信息
-            if (toData.transport) {
+            if (toData?.transport) {
                 if (fromCity === '曼谷' && toData.transport.fromBangkok) {
                     transport = toData.transport.fromBangkok;
-                } else if (toData.transport.fromOther) {
-                    transport = toData.transport.fromOther;
+                } else if (toData.transport.fromOther?.[fromCity]) {
+                    transport = toData.transport.fromOther[fromCity];
+                } else if (toData.transport[`from${fromCity}`]) {
+                    transport = toData.transport[`from${fromCity}`];
                 }
+            }
+            
+            // 如果没找到，尝试从fromData查找
+            if (!transport && fromData?.transport?.toOther?.[toCity]) {
+                transport = fromData.transport.toOther[toCity];
+            }
+            
+            // 默认交通信息
+            if (!transport) {
+                transport = '车程约3小时';
             }
             
             // 判断交通方式
@@ -2771,12 +3830,12 @@
             } else if (transport.includes('船')) {
                 icon = '⛴️';
                 duration = transport;
-            } else if (transport.includes('车') || transport.includes('大巴')) {
+            } else if (transport.includes('车') || transport.includes('大巴') || transport.includes('程')) {
                 icon = '🚌';
                 duration = transport;
             } else {
                 icon = '🚗';
-                duration = transport || '约3小时';
+                duration = transport;
             }
             
             return `
@@ -2868,7 +3927,7 @@
             return html;
         }
 
-        // 生成城市转移日活动（包含交通时间）
+        // 生成城市转移日活动（包含交通时间）- 必须安排核心景点
         function generateTransferDayActivities(city, cityData, prevCity) {
             const food = cityData.attractions.food?.[0] || '当地美食';
             const transport = getTransportInfo(prevCity, city);
@@ -2877,24 +3936,66 @@
             // 解析交通时间，判断是短途还是长途
             const isLongDistance = transport && (transport.includes('飞机') || transport.match(/(\d+)/)?.[1] >= 3);
             
+            // 获取该城市的核心景点（优先选择最经典的）
+            const morningAttractions = cityData.attractions?.morning || [];
+            const afternoonAttractions = cityData.attractions?.afternoon || [];
+            const eveningAttractions = cityData.attractions?.evening || [];
+            
+            // 选择核心景点（优先选择第一个，通常是最经典的）
+            const coreMorning = morningAttractions.length > 0 ? morningAttractions[0] : null;
+            const coreAfternoon = afternoonAttractions.length > 0 ? afternoonAttractions[0] : null;
+            const coreEvening = eveningAttractions.length > 0 ? eveningAttractions[0] : null;
+            
             if (isLongDistance) {
                 // 长途转移（飞机或3小时以上车程）- 上午出发，中午/下午到达
                 html += generateActivityHTML('07:00', '🍳 酒店早餐', '享用早餐，准备出发', '含在住宿内');
                 html += generateActivityHTML('08:30', `🚗 从${prevCity}出发`, `前往${city}，${transport}`, '交通费用另计');
                 html += generateActivityHTML('12:00', `🏨 抵达${city}，酒店入住`, '办理入住，稍作休整', '含在住宿内');
-                html += generateActivityHTML('14:00', '🚶 周边轻松探索', '熟悉周边环境，适应新城市', '免费');
-                html += generateActivityHTML('16:00', '☕ 下午茶休息', '恢复旅途疲劳', '¥30-50');
-                html += generateActivityHTML('19:00', `🍽️ ${food}`, '品尝当地特色美食', '¥80-150');
+                
+                // 下午安排核心景点（不是周边探索！）
+                if (coreAfternoon) {
+                    html += generateActivityHTML('14:00', `📸 ${coreAfternoon}`, `抵达后直奔${city}必打卡景点，开启精彩旅程`, '门票另计');
+                } else if (coreMorning) {
+                    html += generateActivityHTML('14:00', `📸 ${coreMorning}`, `抵达后直奔${city}必打卡景点，开启精彩旅程`, '门票另计');
+                } else {
+                    html += generateActivityHTML('14:00', `📸 ${city}经典景点`, '探索城市标志性景点', '门票另计');
+                }
+                
+                html += generateActivityHTML('17:00', '📷 景点拍照打卡', '记录美好瞬间', '免费');
+                
+                // 晚上安排核心夜景点
+                if (coreEvening) {
+                    html += generateActivityHTML('19:00', `🌆 ${coreEvening}`, `感受${city}夜晚魅力`, '免费');
+                } else {
+                    html += generateActivityHTML('19:00', `🍽️ ${food}`, '品尝当地特色美食', '¥80-150');
+                }
+                
                 html += generateActivityHTML('21:00', `🏨 今晚住${city}`, '好好休息，明天深度游览', '含在住宿内');
             } else {
-                // 短途转移（2-3小时车程）- 早餐后出发，中午到达
+                // 短途转移（2-3小时车程）- 早餐后出发，中午到达，下午可以玩
                 html += generateActivityHTML('08:00', '🍳 酒店早餐', '享用早餐', '含在住宿内');
                 html += generateActivityHTML('09:30', `🚗 前往${city}`, transport ? `${transport}，前往目的地` : '收拾行李出发', '交通费用另计');
                 html += generateActivityHTML('12:00', `🏨 抵达${city}，酒店入住`, '到达后办理入住，稍作休息', '含在住宿内');
-                html += generateActivityHTML('14:00', '🚶 周边探索', '熟悉周边环境', '免费');
-                html += generateActivityHTML('16:00', '☕ 下午茶时光', '放松休息', '¥30-50');
-                html += generateActivityHTML('19:00', `🍽️ ${food}`, '开启美食之旅', '¥80-150');
-                html += generateActivityHTML('21:00', `🏨 今晚住${city}`, '好好休息，明天开始精彩旅程', '含在住宿内');
+                
+                // 下午必须安排核心景点
+                if (coreAfternoon) {
+                    html += generateActivityHTML('14:00', `📸 ${coreAfternoon}`, `开启${city}第一站，打卡必游景点`, '门票另计');
+                } else if (coreMorning) {
+                    html += generateActivityHTML('14:00', `📸 ${coreMorning}`, `开启${city}第一站，打卡必游景点`, '门票另计');
+                } else {
+                    html += generateActivityHTML('14:00', `📸 ${city}地标景点`, '探索城市必去景点', '门票另计');
+                }
+                
+                html += generateActivityHTML('17:00', '☕ 下午茶时光', '休息放松', '¥30-50');
+                
+                // 晚上安排
+                if (coreEvening) {
+                    html += generateActivityHTML('19:00', `🌆 ${coreEvening}`, `感受${city}独特夜景`, '免费');
+                } else {
+                    html += generateActivityHTML('19:00', `🍽️ ${food}`, '品尝地道美食', '¥80-150');
+                }
+                
+                html += generateActivityHTML('21:00', `🏨 今晚住${city}`, '好好休息，明天继续探索', '含在住宿内');
             }
             
             return html;
@@ -2918,37 +4019,54 @@
             return baseSchedules;
         }
 
-        // 获取时段活动（带去重）
+        // 获取未使用过的景点（带去重）
+        function getUniqueAttraction(list, city, usedSet) {
+            if (!list || list.length === 0) return null;
+            for (const item of list) {
+                const key = `${city}-${item}`;
+                if (!usedSet.has(key)) {
+                    usedSet.add(key);
+                    return item;
+                }
+            }
+            // 都用过了，返回随机一个
+            return list[Math.floor(Math.random() * list.length)];
+        }
+
+        // 获取时段活动（利用丰富的城市数据）
         function getActivityForSlot(city, cityData, slot, index) {
             const type = cityData.type;
             const attractions = cityData.attractions;
-
-            // 获取未使用过的景点
-            function getUniqueAttraction(list) {
-                if (!list || list.length === 0) return null;
-                for (const item of list) {
-                    const key = `${city}-${item}`;
-                    if (!usedAttractionsGlobal.has(key)) {
-                        usedAttractionsGlobal.add(key);
-                        return item;
-                    }
-                }
-                // 都用过了，返回随机一个
-                return list[Math.floor(Math.random() * list.length)];
-            }
-
+            
+            // 获取各类活动数据
+            const shopping = cityData.shopping || [];
+            const restaurants = cityData.restaurants || [];
+            const beachList = cityData.beach || [];
+            const nightMarket = cityData.nightMarket || [];
+            const walkingStreet = cityData.walkingStreet || [];
+            const diving = cityData.diving || [];
+            
             // 根据时段和城市类型返回活动
             switch (slot.type) {
                 case 'morning':
+                    // 上午：景点游览为主
                     if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
-                        const beach = getUniqueAttraction(attractions.morning);
+                        const beach = getUniqueAttraction(beachList.length > 0 ? beachList : attractions.morning, city, usedAttractionsGlobal);
                         return {
                             name: `${slot.icon} 海滩晨景：${beach || '海边漫步'}`,
                             desc: '享受清晨海风和宁静时光',
                             price: '免费'
                         };
                     }
-                    const morning = getUniqueAttraction(attractions.morning);
+                    if (type === CityTypes.CULTURE) {
+                        const temple = getUniqueAttraction(attractions.morning, city, usedAttractionsGlobal);
+                        return {
+                            name: `${slot.icon} 文化巡礼：${temple || '古迹游览'}`,
+                            desc: '感受历史与文化的沉淀',
+                            price: '¥50-150'
+                        };
+                    }
+                    const morning = getUniqueAttraction(attractions.morning, city, usedAttractionsGlobal);
                     return {
                         name: `${slot.icon} 游览${morning || '当地景点'}`,
                         desc: '避开人流，享受清晨时光',
@@ -2956,15 +4074,28 @@
                     };
 
                 case 'lunch':
-                    const food = getUniqueAttraction(attractions.food);
+                    // 午餐：网红餐厅或当地美食
+                    const restaurant = getUniqueAttraction(restaurants.length > 0 ? restaurants : attractions.food, city, usedAttractionsGlobal);
+                    const food = getUniqueAttraction(attractions.food, city, usedAttractionsGlobal);
+                    const lunchSpot = restaurant || food;
                     return {
-                        name: `${slot.icon} 品尝${food || '当地美食'}`,
-                        desc: '体验地道风味',
-                        price: '¥50-150'
+                        name: `${slot.icon} 品尝${lunchSpot || '当地美食'}`,
+                        desc: restaurants.length > 0 ? '打卡网红餐厅，体验地道风味' : '体验地道风味',
+                        price: '¥50-200'
                     };
 
                 case 'afternoon':
+                    // 下午：根据城市类型安排不同活动
                     if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
+                        // 海岛：潜水/浮潜/水上活动
+                        if (diving.length > 0 && Math.random() > 0.5) {
+                            const diveSpot = getUniqueAttraction(diving, city, usedAttractionsGlobal);
+                            return {
+                                name: `${slot.icon} 出海潜水：${diveSpot || '浮潜体验'}`,
+                                desc: '探索海底世界，与热带鱼共舞',
+                                price: '¥300-800'
+                            };
+                        }
                         const activity = cityData.activities.find(a => a.includes('浮潜') || a.includes('潜水') || a.includes('水上')) || '海滩活动';
                         return {
                             name: `${slot.icon} ${activity}`,
@@ -2972,7 +4103,16 @@
                             price: '¥200-500'
                         };
                     }
-                    const afternoon = getUniqueAttraction(attractions.afternoon);
+                    if (type === CityTypes.URBAN && shopping.length > 0 && Math.random() > 0.6) {
+                        // 都市：商场购物
+                        const mall = getUniqueAttraction(shopping, city, usedAttractionsGlobal);
+                        return {
+                            name: `${slot.icon} 购物时光：${mall || '当地商场'}`,
+                            desc: '逛商场、买特产、享受空调',
+                            price: '视购买而定'
+                        };
+                    }
+                    const afternoon = getUniqueAttraction(attractions.afternoon, city, usedAttractionsGlobal);
                     return {
                         name: `${slot.icon} 探索${afternoon || '城市风光'}`,
                         desc: '深入了解当地文化',
@@ -2980,13 +4120,23 @@
                     };
 
                 case 'beach':
+                    // 海滩时段：阳光浴或海滩活动
+                    if (beachList.length > 0) {
+                        const beachName = getUniqueAttraction(beachList, city, usedAttractionsGlobal);
+                        return {
+                            name: `${slot.icon} 海滩时光：${beachName || '阳光沙滩'}`,
+                            desc: '阳光、沙滩、海浪，尽情放松',
+                            price: '免费'
+                        };
+                    }
                     return {
-                        name: `${slot.icon} 海滩时光`,
-                        desc: '阳光、沙滩、海浪，尽情放松',
+                        name: `${slot.icon} 海滩日光浴`,
+                        desc: '享受热带阳光，放松身心',
                         price: '免费'
                     };
 
                 case 'evening':
+                    // 傍晚：日落/人文步行街/夜市准备
                     if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
                         return {
                             name: `${slot.icon} 日落观赏`,
@@ -2994,7 +4144,15 @@
                             price: '免费'
                         };
                     }
-                    const evening = getUniqueAttraction(attractions.evening);
+                    if (walkingStreet.length > 0 && Math.random() > 0.5) {
+                        const street = getUniqueAttraction(walkingStreet, city, usedAttractionsGlobal);
+                        return {
+                            name: `${slot.icon} 漫步${street || '人文步行街'}`,
+                            desc: '感受当地人文气息，欣赏街头艺术',
+                            price: '免费'
+                        };
+                    }
+                    const evening = getUniqueAttraction(attractions.evening, city, usedAttractionsGlobal);
                     return {
                         name: `${slot.icon} ${evening || '休闲时光'}`,
                         desc: '放松身心',
@@ -3002,7 +4160,17 @@
                     };
 
                 case 'dinner':
-                    const dinner = getUniqueAttraction(attractions.food) || getUniqueAttraction(attractions.night);
+                    // 晚餐：夜市小吃或特色餐厅
+                    if (nightMarket.length > 0 && Math.random() > 0.4) {
+                        const market = getUniqueAttraction(nightMarket, city, usedAttractionsGlobal);
+                        return {
+                            name: `${slot.icon} 夜市美食：${market || '当地夜市'}`,
+                            desc: '逛夜市、吃小吃、感受烟火气',
+                            price: '¥50-150'
+                        };
+                    }
+                    const dinner = getUniqueAttraction(restaurants.length > 0 ? restaurants : attractions.food, city, usedAttractionsGlobal) 
+                                   || getUniqueAttraction(attractions.food, city, usedAttractionsGlobal);
                     return {
                         name: `${slot.icon} 晚餐${dinner ? `：${dinner}` : ''}`,
                         desc: '享受美食之夜',
