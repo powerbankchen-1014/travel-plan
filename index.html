@@ -115,52 +115,53 @@
         .hero-content {
             position: relative;
             z-index: 1;
-            padding: 40px 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
         }
 
         .hero-badge {
             display: inline-block;
             background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
-            padding: 10px 25px;
+            padding: 8px 18px;
             border-radius: 50px;
             color: white;
-            font-size: 14px;
-            margin-bottom: 30px;
+            font-size: 12px;
+            margin-bottom: 20px;
             border: 2px solid rgba(255,255,255,0.4);
-            animation: pulse 2s ease-in-out infinite;
         }
 
         .hero-title {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 700;
             color: white;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             line-height: 1.2;
             text-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
         .hero-title span {
             display: block;
-            font-size: 32px;
-            margin-top: 10px;
+            font-size: 24px;
+            margin-top: 5px;
         }
 
         .hero-subtitle {
-            font-size: 18px;
+            font-size: 15px;
             color: rgba(255,255,255,0.95);
-            margin-bottom: 30px;
-            max-width: 320px;
-            line-height: 1.8;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
         /* 核心卖点展示 */
         .hero-features {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 40px;
-            animation: slideUp 0.8s ease 0.3s both;
+            flex-direction: row;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
 
         @keyframes slideUp {
@@ -171,56 +172,49 @@
         .hero-feature {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
-            padding: 12px 20px;
+            padding: 8px 14px;
             border-radius: 50px;
             border: 1px solid rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
-        }
-
-        .hero-feature:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateX(5px);
         }
 
         .hero-feature-icon {
-            font-size: 22px;
+            font-size: 16px;
         }
 
         .hero-feature-text {
             color: white;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .hero-trust {
-            margin-top: 25px;
+            margin-top: 15px;
             color: rgba(255,255,255,0.8);
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .hero-trust strong {
             color: white;
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .btn-primary {
             background: white;
             color: var(--primary);
             border: none;
-            padding: 20px 60px;
-            font-size: 20px;
+            padding: 15px 40px;
+            font-size: 17px;
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            animation: pulse 2s ease-in-out infinite;
+            gap: 8px;
         }
 
         .btn-primary:hover {
@@ -1144,13 +1138,13 @@
             display: none;
         }
 
-        /* 悬浮顾问按钮 */
+        /* 悬浮顾问按钮 - 放右侧不挡操作 */
         .fab-consultant {
             position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
+            bottom: 20px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
             background: var(--gradient-1);
             border-radius: 50%;
             display: flex;
@@ -1158,13 +1152,12 @@
             justify-content: center;
             align-items: center;
             color: white;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255,140,66,0.4);
+            box-shadow: 0 4px 15px rgba(255,140,66,0.4);
             transition: all 0.3s ease;
             z-index: 99;
-            animation: float 3s ease-in-out infinite;
         }
 
         .fab-consultant:hover {
@@ -1173,8 +1166,8 @@
         }
 
         .fab-consultant-icon {
-            font-size: 24px;
-            margin-bottom: 2px;
+            font-size: 20px;
+            margin-bottom: 1px;
         }
 
         /* 结果页优化 */
@@ -1238,7 +1231,7 @@
             
             <button class="btn-primary" onclick="goToRegion()">
                 立即规划行程
-                <span style="font-size: 24px;">✈️</span>
+                <span style="font-size: 20px;">✈️</span>
             </button>
             
             <p class="hero-trust">已帮 <strong>50,000+</strong> 人省钱出行 · 加微信领团队价</p>
@@ -1411,12 +1404,6 @@
         <div id="resultContent">
             <!-- 动态生成内容 -->
         </div>
-    </div>
-
-    <!-- 悬浮顾问按钮 -->
-    <div class="fab-consultant" onclick="openWechatModal()">
-        <span class="fab-consultant-icon">👩‍💼</span>
-        <span>问Aimee</span>
     </div>
 
     <!-- 底部导航 -->
@@ -4290,6 +4277,13 @@
             `;
 
             document.getElementById('resultContent').innerHTML = html;
+            
+            // 结果页添加悬浮顾问按钮
+            const fab = document.createElement('div');
+            fab.className = 'fab-consultant';
+            fab.onclick = openWechatModal;
+            fab.innerHTML = '<span class="fab-consultant-icon">👩‍💼</span><span>问Aimee</span>';
+            document.getElementById('page-result').appendChild(fab);
         }
 
         // 检查是否超预算
