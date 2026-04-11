@@ -476,6 +476,57 @@
             animation: slideUp 0.3s ease;
         }
 
+        /* 景点选择卡片 */
+        .attraction-card {
+            background: white;
+            border: 2px solid #E9ECEF;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .attraction-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.15);
+        }
+
+        .attraction-card.selected {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-color: var(--primary);
+        }
+
+        .attraction-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .attraction-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .attraction-card-time {
+            font-size: 11px;
+            color: #888;
+        }
+
         /* 表单页 */
         .form-page {
             background: linear-gradient(180deg, #F0F9FF 0%, #FFF 100%);
@@ -1330,6 +1381,29 @@
                     ✅ 已选择额外城市：<span id="selectedCitiesText"></span>
                 </div>
             </div>
+            <!-- 景点选择（多选卡片）- 核心城市 -->
+            <div class="form-group" id="coreCityAttractionsGroup" style="display: none;">
+                <label class="form-label">🏛️ <strong id="coreCityNameForAttractions"></strong> 必打卡景点（选想去的地方）</label>
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">💡 选中的景点会确保安排进行程，暂不支持全选</p>
+                <div class="attractions-grid" id="coreCityAttractionsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <!-- 动态生成 -->
+                </div>
+                <div class="selected-attractions-display" id="coreCitySelectedAttractionsDisplay" style="margin-top: 12px; padding: 10px 15px; background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border-radius: 10px; font-size: 13px; color: #2E7D32; display: none;">
+                    ✅ 已选景点：<span id="coreCitySelectedAttractionsText"></span>
+                </div>
+            </div>
+
+            <!-- 景点选择（多选卡片）- 额外城市 -->
+            <div class="form-group" id="extraCityAttractionsGroup" style="display: none;">
+                <label class="form-label">🎯 <strong id="extraCityNameForAttractions"></strong> 必打卡景点</label>
+                <div class="attractions-grid" id="extraCityAttractionsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <!-- 动态生成 -->
+                </div>
+                <div class="selected-attractions-display" id="extraCitySelectedAttractionsDisplay" style="margin-top: 12px; padding: 10px 15px; background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); border-radius: 10px; font-size: 13px; color: #E65100; display: none;">
+                    ✅ 已选景点：<span id="extraCitySelectedAttractionsText"></span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">👥 出行人数</label>
                 <div class="people-slider-container">
@@ -3898,6 +3972,332 @@
         // 已选择的额外城市
         let selectedAdditionalCities = [];
 
+        // 用户选择的景点 { cityName: [attraction1, attraction2, ...] }
+        let userSelectedAttractions = {};
+
+        // 景点分类：分为"经典/必去"和"其他"
+        const attractionCategories = {
+            '东京': {
+                classic: ['浅草寺', '东京晴空塔', '涩谷十字路口', '秋叶原'],
+                timeOfDay: {
+                    morning: ['浅草寺', '明治神宫'],
+                    afternoon: ['秋叶原', '原宿'],
+                    evening: ['东京晴空塔', '涩谷十字路口', '新宿歌舞伎町']
+                }
+            },
+            '京都': {
+                classic: ['伏见稻荷大社', '金阁寺', '清水寺', '岚山'],
+                timeOfDay: {
+                    morning: ['伏见稻荷大社', '金阁寺'],
+                    afternoon: ['清水寺', '祇园'],
+                    evening: ['岚山竹林', '鸭川']
+                }
+            },
+            '大阪': {
+                classic: ['道顿堀', '大阪城', '环球影城', '心斋桥'],
+                timeOfDay: {
+                    morning: ['大阪城', '黑门市场'],
+                    afternoon: ['心斋桥', '道顿堀'],
+                    evening: ['梅田蓝天大厦', '道顿堀夜景']
+                }
+            },
+            '曼谷': {
+                classic: ['大皇宫', '卧佛寺', '郑王庙', '考山路'],
+                timeOfDay: {
+                    morning: ['大皇宫', '卧佛寺', '郑王庙'],
+                    afternoon: ['四面佛', '曼谷艺术文化中心'],
+                    evening: ['考山路', '湄南河游船', 'Asiatique夜市']
+                }
+            },
+            '清迈': {
+                classic: ['素贴山双龙寺', '宁曼路', '周日夜市', '塔佩门'],
+                timeOfDay: {
+                    morning: ['素贴山双龙寺', '清曼寺'],
+                    afternoon: ['宁曼路', '清迈大学'],
+                    evening: ['周日夜市', '长康路夜市']
+                }
+            }
+        };
+
+        // 获取城市所有景点（整合数据库和分类）
+        function getCityAllAttractions(cityName) {
+            const cityData = cityDatabase[cityName];
+            if (!cityData || !cityData.attractions) return [];
+
+            const attractions = cityData.attractions;
+            let allAttractions = [];
+
+            // 合并所有时段的景点
+            ['morning', 'afternoon', 'evening', 'night', 'food'].forEach(time => {
+                if (attractions[time]) {
+                    allAttractions = allAttractions.concat(attractions[time]);
+                }
+            });
+
+            // 去重
+            return [...new Set(allAttractions)];
+        }
+
+        // 获取景点推荐时段
+        function getAttractionRecommendedTime(attraction, cityName) {
+            const cityData = cityDatabase[cityName];
+            if (!cityData || !cityData.attractions) return '';
+
+            const attractions = cityData.attractions;
+            const timeMap = {
+                morning: '上午',
+                afternoon: '下午',
+                evening: '傍晚',
+                night: '夜晚',
+                food: '用餐'
+            };
+
+            for (const [time, list] of Object.entries(attractions)) {
+                if (list && list.includes(attraction)) {
+                    return timeMap[time] || '';
+                }
+            }
+            return '';
+        }
+
+        // 显示城市景点选择
+        function showCityAttractions(cityName, containerId, displayId, textId, isCoreCity) {
+            const attractions = getCityAllAttractions(cityName);
+            if (attractions.length === 0) return;
+
+            const container = document.getElementById(containerId);
+            const display = document.getElementById(displayId);
+            const text = document.getElementById(textId);
+
+            // 生成景点卡片
+            let html = '';
+            attractions.forEach(attraction => {
+                const time = getAttractionRecommendedTime(attraction, cityName);
+                const isSelected = isCoreCity
+                    ? (userSelectedAttractions['__core__']?.includes(attraction) || false)
+                    : (userSelectedAttractions[cityName]?.includes(attraction) || false);
+                
+                // 转义景点名称中的特殊字符，避免破坏HTML属性
+                const safeCityName = cityName.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                const safeAttraction = attraction.replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+                html += `
+                    <div class="attraction-card ${isSelected ? 'selected' : ''}"
+                         onclick="toggleAttraction('${safeCityName}', '${safeAttraction}', this, ${isCoreCity})">
+                        <div class="attraction-card-name">${attraction}</div>
+                        <div class="attraction-card-time">${time ? '推荐: ' + time : '推荐时段未知'}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // 更新显示已选景点
+            updateSelectedAttractionsDisplay(cityName, displayId, textId, isCoreCity);
+        }
+
+        // 切换景点选择
+        function toggleAttraction(cityName, attraction, element, isCoreCity) {
+            const key = isCoreCity ? '__core__' : cityName;
+
+            if (!userSelectedAttractions[key]) {
+                userSelectedAttractions[key] = [];
+            }
+
+            const list = userSelectedAttractions[key];
+            const index = list.indexOf(attraction);
+
+            if (index === -1) {
+                // 选中
+                list.push(attraction);
+                element.classList.add('selected');
+            } else {
+                // 取消选中
+                list.splice(index, 1);
+                element.classList.remove('selected');
+            }
+
+            // 更新显示
+            if (isCoreCity) {
+                updateSelectedAttractionsDisplay('__core__', 'coreCitySelectedAttractionsDisplay', 'coreCitySelectedAttractionsText', true);
+            } else {
+                updateSelectedAttractionsDisplay(cityName, 'extraCitySelectedAttractionsDisplay', 'extraCitySelectedAttractionsText', false);
+            }
+        }
+
+        // 更新已选景点显示
+        function updateSelectedAttractionsDisplay(cityName, displayId, textId, isCoreCity) {
+            const display = document.getElementById(displayId);
+            const text = document.getElementById(textId);
+
+            if (!display || !text) return;
+
+            const key = isCoreCity ? '__core__' : cityName;
+            const selected = userSelectedAttractions[key] || [];
+
+            if (selected.length > 0) {
+                text.textContent = selected.join('、');
+                display.style.display = 'block';
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        // 获取所有用户选择的景点
+        function getAllSelectedAttractions() {
+            let all = [];
+            // 核心城市景点
+            if (userSelectedAttractions['__core__']) {
+                all = all.concat(userSelectedAttractions['__core__']);
+            }
+            // 其他城市景点
+            selectedAdditionalCities.forEach(city => {
+                if (userSelectedAttractions[city]) {
+                    all = all.concat(userSelectedAttractions[city]);
+                }
+            });
+            return [...new Set(all)];
+        }
+
+        // 获取某城市用户选择的景点
+        function getCitySelectedAttractions(cityName, isCoreCity) {
+            const key = isCoreCity ? '__core__' : cityName;
+            return userSelectedAttractions[key] || [];
+        }
+
+        // 获取用户选择景点的汇总（用于结果页显示）
+        function getSelectedAttractionsSummary() {
+            const coreCity = userData.city;
+            const coreAttractions = userSelectedAttractions['__core__'] || [];
+            const allExtraAttractions = [];
+
+            selectedAdditionalCities.forEach(city => {
+                const attractions = userSelectedAttractions[city] || [];
+                if (attractions.length > 0) {
+                    allExtraAttractions.push({ city, attractions });
+                }
+            });
+
+            if (coreAttractions.length === 0 && allExtraAttractions.length === 0) {
+                return ''; // 没有选择景点，不显示
+            }
+
+            let html = `
+                <div class="selected-attractions-summary" style="
+                    background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+                    border-radius: 16px;
+                    padding: 20px;
+                    margin: 20px 0;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                ">
+                    <h3 style="
+                        font-size: 18px;
+                        color: #E65100;
+                        margin-bottom: 15px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    ">
+                        ⭐ 你精选的景点（已排进行程）
+                    </h3>
+            `;
+
+            // 核心城市景点
+            if (coreAttractions.length > 0) {
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #FF6B35;
+                            color: white;
+                            padding: 4px 12px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            font-weight: 600;
+                            margin-bottom: 10px;
+                        ">核心城市</div>
+                        <div style="
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 8px;
+                        ">📍 ${coreCity}</div>
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 8px;
+                        ">
+                            ${coreAttractions.map(attr => `
+                                <span style="
+                                    background: white;
+                                    color: #E65100;
+                                    padding: 6px 12px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                    border: 1px solid #FFE0B2;
+                                ">✓ ${attr}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 额外城市景点
+            allExtraAttractions.forEach(({ city, attractions }) => {
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="
+                            display: inline-block;
+                            background: #2196F3;
+                            color: white;
+                            padding: 4px 12px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            font-weight: 600;
+                            margin-bottom: 10px;
+                        ">周边城市</div>
+                        <div style="
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 8px;
+                        ">📍 ${city}</div>
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 8px;
+                        ">
+                            ${attractions.map(attr => `
+                                <span style="
+                                    background: white;
+                                    color: #1565C0;
+                                    padding: 6px 12px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                    border: 1px solid #BBDEFB;
+                                ">✓ ${attr}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    <div style="
+                        margin-top: 15px;
+                        padding-top: 15px;
+                        border-top: 1px dashed #FFE0B2;
+                        font-size: 13px;
+                        color: #666;
+                    ">
+                        💡 以上景点已根据行程安排在合适的时间段，确保您能充分游览
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
         // 跨境城市对定义（这些城市即使对方是hub也应该可以互相安排）
         const crossBorderPairs = {
             '新山': ['新加坡'],
@@ -4028,13 +4428,47 @@
                 }
                 element.style.background = '#E3F2FD';
                 element.style.border = '1px solid #2196F3';
+
+                // 显示该城市的景点选择
+                showExtraCityAttractions(cityName);
             } else {
                 selectedAdditionalCities = selectedAdditionalCities.filter(c => c !== cityName);
                 element.style.background = 'white';
                 element.style.border = 'none';
+
+                // 隐藏该城市的景点选择
+                hideExtraCityAttractions();
             }
 
             updateSelectedCitiesDisplay();
+        }
+
+        // 显示额外城市的景点选择
+        function showExtraCityAttractions(cityName) {
+            const group = document.getElementById('extraCityAttractionsGroup');
+            const nameLabel = document.getElementById('extraCityNameForAttractions');
+
+            if (cityName && cityDatabase[cityName]) {
+                nameLabel.textContent = cityName;
+                showCityAttractions(cityName, 'extraCityAttractionsGrid', 'extraCitySelectedAttractionsDisplay', 'extraCitySelectedAttractionsText', false);
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+        }
+
+        // 隐藏额外城市景点选择
+        function hideExtraCityAttractions() {
+            const group = document.getElementById('extraCityAttractionsGroup');
+            group.style.display = 'none';
+        }
+
+        // 隐藏额外城市景点选择（当核心城市变更时调用）
+        function hideAllExtraCityAttractions() {
+            const group = document.getElementById('extraCityAttractionsGroup');
+            if (group) group.style.display = 'none';
+            // 清除该城市的景点选择
+            delete userSelectedAttractions['__extra__'];
         }
 
         // 更新已选城市显示
@@ -4066,13 +4500,39 @@
                 cityIcon.textContent = cityIcons[city] || '🏙️';
                 // 更新额外城市选择
                 updateAdditionalCitiesUI(city);
+
+                // 显示核心城市的景点选择
+                showCoreCityAttractions(city);
             } else {
                 cityHint.style.display = 'none';
                 cityIcon.textContent = '🏙️';
                 document.getElementById('additionalCitiesGroup').style.display = 'none';
                 selectedAdditionalCities = [];
+
+                // 隐藏核心城市景点选择
+                hideCoreCityAttractions();
             }
         });
+
+        // 显示核心城市景点选择
+        function showCoreCityAttractions(cityName) {
+            const group = document.getElementById('coreCityAttractionsGroup');
+            const nameLabel = document.getElementById('coreCityNameForAttractions');
+
+            if (cityName && cityDatabase[cityName]) {
+                nameLabel.textContent = cityName;
+                showCityAttractions(cityName, 'coreCityAttractionsGrid', 'coreCitySelectedAttractionsDisplay', 'coreCitySelectedAttractionsText', true);
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+        }
+
+        // 隐藏核心城市景点选择
+        function hideCoreCityAttractions() {
+            const group = document.getElementById('coreCityAttractionsGroup');
+            if (group) group.style.display = 'none';
+        }
 
         // 天数下拉变更
         function onDaysChange(value) {
@@ -4235,6 +4695,12 @@
 
             // 机票信息卡片
             html += renderFlightInfo(data);
+
+            // 用户选择的景点汇总
+            const selectedAttractionsSummary = getSelectedAttractionsSummary();
+            if (selectedAttractionsSummary) {
+                html += selectedAttractionsSummary;
+            }
 
             // 推荐酒店卡片
             html += renderHotels(data);
@@ -4568,7 +5034,7 @@
                 const nextCity = processCityCode(nextCityRaw);
                     
                 const isFirstDayInCity = (i === 1) || (city !== prevCity);
-                const activities = generateSmartDayActivities(city, cityData, i, isFirstDay, isLastDay, nextCity, prevCity, isFirstDayInCity);
+                const activities = generateSmartDayActivities(city, cityData, i, isFirstDay, isLastDay, nextCity, prevCity, isFirstDayInCity, isCoreCity);
 
                 html += `
                     ${transportInfo}
@@ -5496,7 +5962,7 @@
         }
 
         // 生成智能每日活动（去重 + 差异化）
-        function generateSmartDayActivities(city, cityData, day, isFirstDay, isLastDay, nextCity, prevCity, isFirstDayInCity) {
+        function generateSmartDayActivities(city, cityData, day, isFirstDay, isLastDay, nextCity, prevCity, isFirstDayInCity, isCoreCity = false) {
             if (!cityData) {
                 console.error(`城市数据不存在: ${city}`);
                 return '<div class="day-content">暂无活动数据</div>';
@@ -5514,14 +5980,14 @@
 
             // 城市转移日（从其他城市过来，但不是第1天抵达）
             if (isFirstDayInCity && prevCity && prevCity !== city) {
-                return generateTransferDayActivities(city, cityData, prevCity);
+                return generateTransferDayActivities(city, cityData, prevCity, isCoreCity);
             }
 
             // 正常游览日 - 根据城市类型生成不同活动
             const schedules = getCityTypeSchedules(cityType);
 
             schedules.forEach((slot, index) => {
-                const activity = getActivityForSlot(city, cityData, slot, index);
+                const activity = getActivityForSlot(city, cityData, slot, index, isCoreCity);
                 html += generateActivityHTML(slot.time, activity.name, activity.desc, activity.price);
             });
 
@@ -5544,8 +6010,8 @@
             return html;
         }
 
-        // 生成城市转移日活动（包含交通时间）- 必须安排核心景点
-        function generateTransferDayActivities(city, cityData, prevCity) {
+        // 生成城市转移日活动（包含交通时间）- 必须安排用户选择的景点
+        function generateTransferDayActivities(city, cityData, prevCity, isCoreCity = false) {
             if (!cityData) {
                 console.error(`城市数据不存在: ${city}`);
                 return '<div class="day-content">暂无活动数据</div>';
@@ -5553,74 +6019,99 @@
             const food = cityData.attractions?.food?.[0] || '当地美食';
             const transport = getTransportInfo(prevCity, city);
             let html = '';
-            
+
             // 解析交通时间，判断是短途还是长途
-            // 使用parseTransportTime正确解析时间（支持h/小时/min/分钟各种格式）
             const transportHours = transport ? parseTransportTime(transport) : 0;
             const isLongDistance = transport && (transport.includes('飞机') || transportHours >= 3);
-            
-            // 获取该城市的核心景点（优先选择最经典的）
+
+            // 获取用户选择的景点
+            const userSelected = getCitySelectedAttractions(city, isCoreCity);
+
+            // 获取该城市的景点
             const morningAttractions = cityData.attractions?.morning || [];
             const afternoonAttractions = cityData.attractions?.afternoon || [];
             const eveningAttractions = cityData.attractions?.evening || [];
-            
-            // 选择核心景点（优先选择第一个，通常是最经典的）
-            const coreMorning = morningAttractions.length > 0 ? morningAttractions[0] : null;
-            const coreAfternoon = afternoonAttractions.length > 0 ? afternoonAttractions[0] : null;
-            const coreEvening = eveningAttractions.length > 0 ? eveningAttractions[0] : null;
-            
+
+            // 从用户选择中获取适合时段的景点
+            const getUserAttraction = (timeType) => {
+                if (!userSelected || userSelected.length === 0) return null;
+                const timeList = cityData.attractions?.[timeType] || [];
+                for (const attr of userSelected) {
+                    if (timeList.includes(attr) && !usedAttractionsGlobal.has(`${city}-${attr}`)) {
+                        usedAttractionsGlobal.add(`${city}-${attr}`);
+                        return attr;
+                    }
+                }
+                return null;
+            };
+
+            // 获取未使用的用户景点
+            const getUnusedUserAttraction = () => {
+                if (!userSelected || userSelected.length === 0) return null;
+                for (const attr of userSelected) {
+                    if (!usedAttractionsGlobal.has(`${city}-${attr}`)) {
+                        usedAttractionsGlobal.add(`${city}-${attr}`);
+                        return attr;
+                    }
+                }
+                return null;
+            };
+
+            // 优先使用用户选择的景点
+            const coreAfternoon = getUserAttraction('afternoon') || getUserAttraction('morning') ||
+                                  (afternoonAttractions.length > 0 ? afternoonAttractions[0] : null);
+            const coreEvening = getUserAttraction('evening') ||
+                               (eveningAttractions.length > 0 ? eveningAttractions[0] : null);
+            const coreFood = getUserAttraction('food') || food;
+
             if (isLongDistance) {
-                // 长途转移（飞机或3小时以上车程）- 上午出发，中午/下午到达
+                // 长途转移（飞机或3小时以上车程）
                 html += generateActivityHTML('07:00', '🍳 酒店早餐', '享用早餐，准备出发', '含在住宿内');
                 html += generateActivityHTML('08:30', `🚗 从${prevCity}出发`, `前往${city}，${transport}`, '交通费用另计');
                 html += generateActivityHTML('12:00', `🏨 抵达${city}，酒店入住`, '办理入住，稍作休整', '含在住宿内');
-                
-                // 下午安排核心景点（不是周边探索！）
+
+                // 下午安排景点
                 if (coreAfternoon) {
                     html += generateActivityHTML('14:00', `📸 ${coreAfternoon}`, `抵达后直奔${city}必打卡景点，开启精彩旅程`, '门票另计');
-                } else if (coreMorning) {
-                    html += generateActivityHTML('14:00', `📸 ${coreMorning}`, `抵达后直奔${city}必打卡景点，开启精彩旅程`, '门票另计');
                 } else {
                     html += generateActivityHTML('14:00', `📸 ${city}经典景点`, '探索城市标志性景点', '门票另计');
                 }
-                
+
                 html += generateActivityHTML('17:00', '📷 景点拍照打卡', '记录美好瞬间', '免费');
-                
-                // 晚上安排核心夜景点
+
+                // 晚上安排
                 if (coreEvening) {
                     html += generateActivityHTML('19:00', `🌆 ${coreEvening}`, `感受${city}夜晚魅力`, '免费');
                 } else {
-                    html += generateActivityHTML('19:00', `🍽️ ${food}`, '品尝当地特色美食', '¥80-150');
+                    html += generateActivityHTML('19:00', `🍽️ ${coreFood}`, '品尝当地特色美食', '¥80-150');
                 }
-                
+
                 html += generateActivityHTML('21:00', `🏨 今晚住${city}`, '好好休息，明天深度游览', '含在住宿内');
             } else {
-                // 短途转移（2-3小时车程）- 早餐后出发，中午到达，下午可以玩
+                // 短途转移（2-3小时车程）
                 html += generateActivityHTML('08:00', '🍳 酒店早餐', '享用早餐', '含在住宿内');
                 html += generateActivityHTML('09:30', `🚗 前往${city}`, transport ? `${transport}，前往目的地` : '收拾行李出发', '交通费用另计');
                 html += generateActivityHTML('12:00', `🏨 抵达${city}，酒店入住`, '到达后办理入住，稍作休息', '含在住宿内');
-                
-                // 下午必须安排核心景点
+
+                // 下午安排景点
                 if (coreAfternoon) {
                     html += generateActivityHTML('14:00', `📸 ${coreAfternoon}`, `开启${city}第一站，打卡必游景点`, '门票另计');
-                } else if (coreMorning) {
-                    html += generateActivityHTML('14:00', `📸 ${coreMorning}`, `开启${city}第一站，打卡必游景点`, '门票另计');
                 } else {
                     html += generateActivityHTML('14:00', `📸 ${city}地标景点`, '探索城市必去景点', '门票另计');
                 }
-                
+
                 html += generateActivityHTML('17:00', '☕ 下午茶时光', '休息放松', '¥30-50');
-                
+
                 // 晚上安排
                 if (coreEvening) {
                     html += generateActivityHTML('19:00', `🌆 ${coreEvening}`, `感受${city}独特夜景`, '免费');
                 } else {
-                    html += generateActivityHTML('19:00', `🍽️ ${food}`, '品尝地道美食', '¥80-150');
+                    html += generateActivityHTML('19:00', `🍽️ ${coreFood}`, '品尝地道美食', '¥80-150');
                 }
-                
+
                 html += generateActivityHTML('21:00', `🏨 今晚住${city}`, '好好休息，明天继续探索', '含在住宿内');
             }
-            
+
             return html;
         }
 
@@ -5656,15 +6147,18 @@
             return list[Math.floor(Math.random() * list.length)];
         }
 
-        // 获取时段活动（利用丰富的城市数据）
-        function getActivityForSlot(city, cityData, slot, index) {
+        // 获取时段活动（利用丰富的城市数据）- 优先使用用户选择的景点
+        function getActivityForSlot(city, cityData, slot, index, isCoreCity = false) {
             if (!cityData) {
                 console.error(`城市数据不存在: ${city}`);
                 return { type: 'activity', title: '探索城市', desc: '自由探索当地风情' };
             }
             const type = cityData.type;
             const attractions = cityData.attractions || {};
-            
+
+            // 获取用户选择的景点
+            const userSelected = getCitySelectedAttractions(city, isCoreCity);
+
             // 获取各类活动数据
             const shopping = cityData.shopping || [];
             const restaurants = cityData.restaurants || [];
@@ -5672,11 +6166,47 @@
             const nightMarket = cityData.nightMarket || [];
             const walkingStreet = cityData.walkingStreet || [];
             const diving = cityData.diving || [];
-            
+
+            // 从用户选择的景点中获取适合此时段的
+            const getUserSelectedForSlot = (timeType) => {
+                if (!userSelected || userSelected.length === 0) return null;
+                // 根据时段类型过滤
+                const timeAttractions = attractions[timeType] || [];
+                for (const attr of userSelected) {
+                    if (timeAttractions.includes(attr) && !usedAttractionsGlobal.has(`${city}-${attr}`)) {
+                        usedAttractionsGlobal.add(`${city}-${attr}`);
+                        return attr;
+                    }
+                }
+                return null;
+            };
+
+            // 获取未使用的用户选择景点
+            const getUnusedUserSelected = () => {
+                if (!userSelected || userSelected.length === 0) return null;
+                for (const attr of userSelected) {
+                    if (!usedAttractionsGlobal.has(`${city}-${attr}`)) {
+                        usedAttractionsGlobal.add(`${city}-${attr}`);
+                        return attr;
+                    }
+                }
+                return null;
+            };
+
             // 根据时段和城市类型返回活动
             switch (slot.type) {
                 case 'morning':
                     // 上午：景点游览为主
+                    // 先尝试用户选择的上午景点
+                    const userMorning = getUserSelectedForSlot('morning');
+                    if (userMorning) {
+                        return {
+                            name: `${slot.icon} ${userMorning}`,
+                            desc: '你选择的景点，开启美好的一天',
+                            price: '¥50-200'
+                        };
+                    }
+
                     if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
                         const beach = getUniqueAttraction(beachList.length > 0 ? beachList : attractions.morning, city, usedAttractionsGlobal);
                         return {
@@ -5702,6 +6232,15 @@
 
                 case 'lunch':
                     // 午餐：网红餐厅或当地美食
+                    // 先尝试用户选择的美食景点
+                    const userFood = getUserSelectedForSlot('food');
+                    if (userFood) {
+                        return {
+                            name: `${slot.icon} ${userFood}`,
+                            desc: '你选择的美食地点',
+                            price: '¥80-200'
+                        };
+                    }
                     const restaurant = getUniqueAttraction(restaurants.length > 0 ? restaurants : attractions.food, city, usedAttractionsGlobal);
                     const food = getUniqueAttraction(attractions.food, city, usedAttractionsGlobal);
                     const lunchSpot = restaurant || food;
@@ -5713,6 +6252,16 @@
 
                 case 'afternoon':
                     // 下午：根据城市类型安排不同活动
+                    // 先尝试用户选择的下午景点
+                    const userAfternoon = getUserSelectedForSlot('afternoon');
+                    if (userAfternoon) {
+                        return {
+                            name: `${slot.icon} ${userAfternoon}`,
+                            desc: '你选择的景点，下午时光正好',
+                            price: '¥50-200'
+                        };
+                    }
+
                     if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
                         // 海岛：潜水/浮潜/水上活动
                         if (diving.length > 0 && Math.random() > 0.5) {
@@ -5757,55 +6306,68 @@
                         };
                     }
                     return {
-                        name: `${slot.icon} 海滩日光浴`,
-                        desc: '享受热带阳光，放松身心',
+                        name: `${slot.icon} 海滨休闲`,
+                        desc: '享受阳光和海风',
                         price: '免费'
                     };
 
                 case 'evening':
-                    // 傍晚：日落/人文步行街/夜市准备
-                    if (type === CityTypes.BEACH || type === CityTypes.ISLAND) {
+                    // 傍晚：日落、夜景观赏
+                    // 先尝试用户选择的傍晚景点
+                    const userEvening = getUserSelectedForSlot('evening');
+                    if (userEvening) {
                         return {
-                            name: `${slot.icon} 日落观赏`,
-                            desc: '欣赏绝美海边日落',
-                            price: '免费'
-                        };
-                    }
-                    if (walkingStreet.length > 0 && Math.random() > 0.5) {
-                        const street = getUniqueAttraction(walkingStreet, city, usedAttractionsGlobal);
-                        return {
-                            name: `${slot.icon} 漫步${street || '人文步行街'}`,
-                            desc: '感受当地人文气息，欣赏街头艺术',
-                            price: '免费'
-                        };
-                    }
-                    const evening = getUniqueAttraction(attractions.evening, city, usedAttractionsGlobal);
-                    return {
-                        name: `${slot.icon} ${evening || '休闲时光'}`,
-                        desc: '放松身心',
-                        price: '¥50-100'
-                    };
-
-                case 'dinner':
-                    // 晚餐：夜市小吃或特色餐厅
-                    if (nightMarket.length > 0 && Math.random() > 0.4) {
-                        const market = getUniqueAttraction(nightMarket, city, usedAttractionsGlobal);
-                        return {
-                            name: `${slot.icon} 夜市美食：${market || '当地夜市'}`,
-                            desc: '逛夜市、吃小吃、感受烟火气',
+                            name: `${slot.icon} ${userEvening}`,
+                            desc: '你选择的景点，傍晚时分打卡',
                             price: '¥50-150'
                         };
                     }
-                    const dinner = getUniqueAttraction(restaurants.length > 0 ? restaurants : attractions.food, city, usedAttractionsGlobal) 
-                                   || getUniqueAttraction(attractions.food, city, usedAttractionsGlobal);
+                    const evening = getUniqueAttraction(attractions.evening, city, usedAttractionsGlobal);
+                    if (evening) {
+                        return {
+                            name: `${slot.icon} ${evening}`,
+                            desc: '欣赏城市傍晚美景',
+                            price: '¥50-150'
+                        };
+                    }
                     return {
-                        name: `${slot.icon} 晚餐${dinner ? `：${dinner}` : ''}`,
-                        desc: '享受美食之夜',
-                        price: '¥80-200'
+                        name: `${slot.icon} 漫步观景`,
+                        desc: '感受城市傍晚氛围',
+                        price: '免费'
+                    };
+
+                case 'dinner':
+                    // 晚餐：美食体验
+                    const userDinner = getUserSelectedForSlot('food');
+                    if (userDinner) {
+                        return {
+                            name: `${slot.icon} ${userDinner}`,
+                            desc: '你选择的美食地点',
+                            price: '¥100-300'
+                        };
+                    }
+                    const dinner = getUniqueAttraction(attractions.food, city, usedAttractionsGlobal);
+                    return {
+                        name: `${slot.icon} 特色晚餐：${dinner || '当地美食'}`,
+                        desc: '品尝地道晚餐',
+                        price: '¥100-300'
                     };
 
                 default:
-                    return { name: `${slot.icon} 自由活动`, desc: '随心探索', price: '免费' };
+                    // 尝试使用用户选择的景点
+                    const userAny = getUnusedUserSelected();
+                    if (userAny) {
+                        return {
+                            name: `${slot.icon} ${userAny}`,
+                            desc: '你选择的景点',
+                            price: '¥50-200'
+                        };
+                    }
+                    return {
+                        name: `${slot.icon} 自由活动`,
+                        desc: '自由探索当地风情',
+                        price: '免费'
+                    };
             }
         }
 
